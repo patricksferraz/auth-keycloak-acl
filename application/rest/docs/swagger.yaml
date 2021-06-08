@@ -1,0 +1,157 @@
+basePath: /api/v1
+definitions:
+  rest.AccessToken:
+    properties:
+      access_token:
+        type: string
+    required:
+    - access_token
+    type: object
+  rest.Auth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  rest.EmployeeClaims:
+    properties:
+      id:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  rest.HTTPError:
+    properties:
+      error:
+        example: status bad request
+        type: string
+    type: object
+  rest.JWT:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      id_token:
+        type: string
+      not_before_policy:
+        type: integer
+      refresh_expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      scope:
+        type: string
+      session_state:
+        type: string
+      token_type:
+        type: string
+    type: object
+  rest.RefreshToken:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+info:
+  contact:
+    email: comercial@coding4u.com.br
+    name: Coding4u
+  description: Swagger API for Golang Project Auth.
+  termsOfService: http://swagger.io/terms/
+  title: Auth Swagger API
+  version: "1.0"
+paths:
+  /auth/employeeClaims:
+    post:
+      consumes:
+      - application/json
+      description: Get Employee Claims by access token
+      operationId: findEmployeeClaimsByToken
+      parameters:
+      - description: JSON body for get employee claims
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.AccessToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.EmployeeClaims'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: get employee claims
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: System authentication
+      operationId: login
+      parameters:
+      - description: JSON body for authentication
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.Auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.JWT'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: log in
+      tags:
+      - Auth
+  /auth/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: Refresh token route
+      operationId: refreshToken
+      parameters:
+      - description: JSON body for refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.JWT'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: refresh token
+      tags:
+      - Auth
+swagger: "2.0"

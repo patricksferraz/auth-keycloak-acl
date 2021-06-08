@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-conf
+data:
+  GIN_MODE: release
+  KEYCLOAK_BASE_PATH: http://keycloak-http:80
+  ELASTIC_APM_SERVER_URL: http://apm-server-apm-server:8200
+  ELASTIC_APM_SERVICE_NAME: auth-service
