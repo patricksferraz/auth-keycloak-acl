@@ -21,7 +21,7 @@ import (
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name Coding4u
-// @contact.email comercial@coding4u.com.br
+// @contact.email contato@coding4u.com.br
 
 // @BasePath /api/v1
 func StartRestServer(service *external.Keycloak, port int) {
@@ -39,8 +39,8 @@ func StartRestServer(service *external.Keycloak, port int) {
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		v1.POST("/login", authRestService.Login)
-		v1.POST("/refreshToken", authRestService.RefreshToken)
-		v1.POST("/employeeClaims", authRestService.FindEmployeeClaimsByToken)
+		v1.POST("/refresh-token", authRestService.RefreshToken)
+		v1.POST("/claims", authRestService.FindClaimsByToken)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

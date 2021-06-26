@@ -36,7 +36,6 @@ func (a *AuthRestService) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("auth", json).Info("handling Auth request")
 
 	jwt, err := a.AuthService.Login(ctx, json.Username, json.Password)
 	if err != nil {
@@ -45,7 +44,6 @@ func (a *AuthRestService) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("jwt", jwt).Info("JWT response")
 
 	ctx.JSON(http.StatusOK, jwt)
 }
@@ -60,7 +58,7 @@ func (a *AuthRestService) Login(ctx *gin.Context) {
 // @Param body body RefreshToken true "JSON body for refresh token"
 // @Success 200 {object} JWT
 // @Failure 400 {object} HTTPError
-// @Router /auth/refreshToken [post]
+// @Router /auth/refresh-token [post]
 func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
 	var json RefreshToken
 
@@ -72,7 +70,6 @@ func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("refreshToken", json).Info("handling RefreshToken request")
 
 	jwt, err := a.AuthService.RefreshToken(ctx, json.RefreshToken)
 	if err != nil {
@@ -81,24 +78,23 @@ func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("jwt", jwt).Info("JWT response")
 
 	ctx.JSON(http.StatusOK, jwt)
 }
 
-// FindEmployeeClaimsByToken godoc
-// @Summary get employee claims
-// @ID findEmployeeClaimsByToken
+// FindClaimsByToken godoc
+// @Summary get claims
+// @ID findClaimsByToken
 // @Tags Auth
-// @Description Get Employee Claims by access token
+// @Description Get Claims by access token
 // @Accept json
 // @Produce json
-// @Param body body AccessToken true "JSON body for get employee claims"
-// @Success 200 {object} EmployeeClaims
+// @Param body body AccessToken true "JSON body for get claims"
+// @Success 200 {object} Claims
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
-// @Router /auth/employeeClaims [post]
-func (a *AuthRestService) FindEmployeeClaimsByToken(ctx *gin.Context) {
+// @Router /auth/claims [post]
+func (a *AuthRestService) FindClaimsByToken(ctx *gin.Context) {
 	var json AccessToken
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -109,18 +105,16 @@ func (a *AuthRestService) FindEmployeeClaimsByToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("accessToken", json).Info("handling AccessToken request")
 
-	employee, err := a.AuthService.FindEmployeeClaimsByToken(ctx, json.AccessToken)
+	claims, err := a.AuthService.FindClaimsByToken(ctx, json.AccessToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	log.WithField("employeeClaims", employee).Info("employeeClaims response")
 
-	ctx.JSON(http.StatusOK, employee)
+	ctx.JSON(http.StatusOK, claims)
 }
 
 func NewAuthRestService(service *service.AuthService) *AuthRestService {

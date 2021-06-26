@@ -43,7 +43,7 @@ services:
   authdb:
     image: postgres
     volumes:
-      - .pgauthdb:/var/lib/postgresql/data
+      - pgauthdb:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: $AUTHDB_DB
       POSTGRES_USER: $AUTHDB_USERNAME
@@ -134,6 +134,8 @@ services:
 
 volumes:
   esdata:
+    driver: local
+  pgauthdb:
     driver: local
 
 networks:

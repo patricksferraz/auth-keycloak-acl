@@ -17,9 +17,9 @@ definitions:
     - password
     - username
     type: object
-  rest.EmployeeClaims:
+  rest.Claims:
     properties:
-      id:
+      employee_id:
         type: string
       roles:
         items:
@@ -62,21 +62,21 @@ definitions:
     type: object
 info:
   contact:
-    email: comercial@coding4u.com.br
+    email: contato@coding4u.com.br
     name: Coding4u
   description: Swagger API for Golang Project Auth.
   termsOfService: http://swagger.io/terms/
   title: Auth Swagger API
   version: "1.0"
 paths:
-  /auth/employeeClaims:
+  /auth/claims:
     post:
       consumes:
       - application/json
-      description: Get Employee Claims by access token
-      operationId: findEmployeeClaimsByToken
+      description: Get Claims by access token
+      operationId: findClaimsByToken
       parameters:
-      - description: JSON body for get employee claims
+      - description: JSON body for get claims
         in: body
         name: body
         required: true
@@ -88,7 +88,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.EmployeeClaims'
+            $ref: '#/definitions/rest.Claims'
         "400":
           description: Bad Request
           schema:
@@ -97,7 +97,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.HTTPError'
-      summary: get employee claims
+      summary: get claims
       tags:
       - Auth
   /auth/login:
@@ -127,7 +127,7 @@ paths:
       summary: log in
       tags:
       - Auth
-  /auth/refreshToken:
+  /auth/refresh-token:
     post:
       consumes:
       - application/json

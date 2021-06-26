@@ -21,16 +21,16 @@ var doc = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Coding4u",
-            "email": "comercial@coding4u.com.br"
+            "email": "contato@coding4u.com.br"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/employeeClaims": {
+        "/auth/claims": {
             "post": {
-                "description": "Get Employee Claims by access token",
+                "description": "Get Claims by access token",
                 "consumes": [
                     "application/json"
                 ],
@@ -40,11 +40,11 @@ var doc = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "get employee claims",
-                "operationId": "findEmployeeClaimsByToken",
+                "summary": "get claims",
+                "operationId": "findClaimsByToken",
                 "parameters": [
                     {
-                        "description": "JSON body for get employee claims",
+                        "description": "JSON body for get claims",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -57,7 +57,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.EmployeeClaims"
+                            "$ref": "#/definitions/rest.Claims"
                         }
                     },
                     "400": {
@@ -116,7 +116,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/refreshToken": {
+        "/auth/refresh-token": {
             "post": {
                 "description": "Refresh token route",
                 "consumes": [
@@ -185,10 +185,10 @@ var doc = `{
                 }
             }
         },
-        "rest.EmployeeClaims": {
+        "rest.Claims": {
             "type": "object",
             "properties": {
-                "id": {
+                "employee_id": {
                     "type": "string"
                 },
                 "roles": {

@@ -25,7 +25,6 @@ func (a *AuthGrpcService) Login(ctx context.Context, in *pb.LoginRequest) (*pb.J
 		apm.CaptureError(ctx, err).Send()
 		return &pb.JWT{}, err
 	}
-	log.WithField("jwt", jwt).Info("JWT response")
 
 	return &pb.JWT{
 		AccessToken:      jwt.AccessToken,
@@ -50,7 +49,6 @@ func (a *AuthGrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenR
 		apm.CaptureError(ctx, err).Send()
 		return &pb.JWT{}, err
 	}
-	log.WithField("jwt", jwt).Info("JWT response")
 
 	return &pb.JWT{
 		AccessToken:      jwt.AccessToken,
@@ -65,21 +63,20 @@ func (a *AuthGrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenR
 	}, err
 }
 
-func (a *AuthGrpcService) FindEmployeeClaimsByToken(ctx context.Context, in *pb.FindEmployeeClaimsByTokenRequest) (*pb.EmployeeClaims, error) {
+func (a *AuthGrpcService) FindEmployeeClaimsByToken(ctx context.Context, in *pb.FindClaimsByTokenRequest) (*pb.Claims, error) {
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
-	log.WithField("in", in).Info("handling FindEmployeeClaimsByToken request")
+	log.WithField("in", in).Info("handling FindClaimsByToken request")
 
-	employee, err := a.AuthService.FindEmployeeClaimsByToken(ctx, in.AccessToken)
+	claims, err := a.AuthService.FindClaimsByToken(ctx, in.AccessToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
-		return &pb.EmployeeClaims{}, err
+		return &pb.Claims{}, err
 	}
-	log.WithField("employeeClaims", employee).Info("employeeClaims response")
 
-	return &pb.EmployeeClaims{
-		Id:    employee.ID,
-		Roles: employee.Roles,
+	return &pb.Claims{
+		EmployeeId: claims.EmployeeID,
+		Roles:      claims.Roles,
 	}, nil
 }
 
