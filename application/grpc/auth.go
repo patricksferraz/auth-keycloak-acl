@@ -63,7 +63,7 @@ func (a *AuthGrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenR
 	}, err
 }
 
-func (a *AuthGrpcService) FindEmployeeClaimsByToken(ctx context.Context, in *pb.FindClaimsByTokenRequest) (*pb.Claims, error) {
+func (a *AuthGrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClaimsByTokenRequest) (*pb.Claims, error) {
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 	log.WithField("in", in).Info("handling FindClaimsByToken request")
 
