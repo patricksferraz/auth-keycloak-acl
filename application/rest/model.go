@@ -25,9 +25,9 @@ type JWT struct {
 	Scope            string `json:"scope,omitempty"`
 }
 
-type EmployeeClaims struct {
-	ID    string   `json:"id"`
-	Roles []string `json:"roles,omitempty"`
+type Claims struct {
+	EmployeeID string   `json:"employee_id"`
+	Roles      []string `json:"roles,omitempty"`
 }
 
 type HTTPError struct {

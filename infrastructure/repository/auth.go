@@ -20,7 +20,6 @@ func (a *AuthRepository) Login(ctx context.Context, auth *model.Auth) (*model.JW
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
-	log.WithField("auth", auth).Info("Auth attributes")
 
 	jwt, err := a.Service.Client.Login(ctx, a.Service.ClientID, a.Service.ClientSecret, a.Service.Realm, auth.Username, auth.Password)
 	if err != nil {
@@ -28,7 +27,6 @@ func (a *AuthRepository) Login(ctx context.Context, auth *model.Auth) (*model.JW
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
-	log.WithField("jwt", jwt).Info("jwt response")
 
 	return &model.JWT{
 		AccessToken:      jwt.AccessToken,
@@ -48,7 +46,6 @@ func (a *AuthRepository) RefreshToken(ctx context.Context, refreshToken string) 
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
-	log.WithField("refreshToken", refreshToken).Info("refreshToken attributes")
 
 	jwt, err := a.Service.Client.RefreshToken(ctx, refreshToken, a.Service.ClientID, a.Service.ClientSecret, a.Service.Realm)
 	if err != nil {
@@ -56,7 +53,6 @@ func (a *AuthRepository) RefreshToken(ctx context.Context, refreshToken string) 
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
-	log.WithField("jwt", jwt).Info("jwt response")
 
 	return &model.JWT{
 		AccessToken:      jwt.AccessToken,
@@ -71,12 +67,11 @@ func (a *AuthRepository) RefreshToken(ctx context.Context, refreshToken string) 
 	}, nil
 }
 
-func (a *AuthRepository) FindEmployeeClaimsByToken(ctx context.Context, accessToken string) (*model.EmployeeClaims, error) {
-	span, ctx := apm.StartSpan(ctx, "FindEmployeeClaimsByToken", "repository")
+func (a *AuthRepository) FindClaimsByToken(ctx context.Context, accessToken string) (*model.Claims, error) {
+	span, ctx := apm.StartSpan(ctx, "FindClaimsByToken", "repository")
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
-	log.WithField("accessToken", accessToken).Info("accessToken attributes")
 
 	jwt, _, err := a.Service.Client.DecodeAccessToken(ctx, accessToken, a.Service.Realm, a.Service.Audience)
 	if err != nil {
@@ -84,11 +79,10 @@ func (a *AuthRepository) FindEmployeeClaimsByToken(ctx context.Context, accessTo
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
-	log.WithField("jwt", jwt).Info("jwt decoded")
 
-	employeeClaims := new(model.EmployeeClaims)
-	mapstructure.Decode(jwt.Claims, employeeClaims)
-	log.WithField("employeeClaims", employeeClaims).Info("employeeClaims mapstructure")
+	Claims := new(model.Claims)
+	mapstructure.Decode(jwt.Claims, Claims)
+	log.WithField("claims", Claims).Info("claims mapstructure")
 
 	type ResourceAccess struct {
 		ResourceAccess map[string]map[string][]string `mapstructure:"resource_access"`
@@ -98,10 +92,10 @@ func (a *AuthRepository) FindEmployeeClaimsByToken(ctx context.Context, accessTo
 	mapstructure.Decode(jwt.Claims, ra)
 
 	roles := ra.ResourceAccess[a.Service.ClientID]["roles"]
-	employeeClaims.Roles = roles
-	log.WithField("employeeClaims", employeeClaims).Info("employeeClaims with roles")
+	Claims.Roles = roles
+	log.WithField("claims", Claims).Info("claims with roles")
 
-	return employeeClaims, nil
+	return Claims, nil
 }
 
 func NewAuthRepository(service *external.Keycloak) *AuthRepository {

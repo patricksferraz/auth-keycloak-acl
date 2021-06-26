@@ -6,15 +6,15 @@
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Coding4u",
-            "email": "comercial@coding4u.com.br"
+            "email": "contato@coding4u.com.br"
         },
         "version": "1.0"
     },
     "basePath": "/api/v1",
     "paths": {
-        "/auth/employeeClaims": {
+        "/auth/claims": {
             "post": {
-                "description": "Get Employee Claims by access token",
+                "description": "Get Claims by access token",
                 "consumes": [
                     "application/json"
                 ],
@@ -24,11 +24,11 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "get employee claims",
-                "operationId": "findEmployeeClaimsByToken",
+                "summary": "get claims",
+                "operationId": "findClaimsByToken",
                 "parameters": [
                     {
-                        "description": "JSON body for get employee claims",
+                        "description": "JSON body for get claims",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -41,7 +41,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.EmployeeClaims"
+                            "$ref": "#/definitions/rest.Claims"
                         }
                     },
                     "400": {
@@ -100,7 +100,7 @@
                 }
             }
         },
-        "/auth/refreshToken": {
+        "/auth/refresh-token": {
             "post": {
                 "description": "Refresh token route",
                 "consumes": [
@@ -169,10 +169,10 @@
                 }
             }
         },
-        "rest.EmployeeClaims": {
+        "rest.Claims": {
             "type": "object",
             "properties": {
-                "id": {
+                "employee_id": {
                     "type": "string"
                 },
                 "roles": {
