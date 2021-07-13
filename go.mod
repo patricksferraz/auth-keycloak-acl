@@ -14,13 +14,10 @@ require (
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/joho/godotenv v1.3.0
-	github.com/kr/text v0.2.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pelletier/go-toml v1.7.0 // indirect
-	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3
@@ -40,6 +37,5 @@ require (
 	google.golang.org/grpc v1.37.0
 	google.golang.org/grpc/examples v0.0.0-20210507224259-12a377b1e4c9 // indirect
 	google.golang.org/protobuf v1.25.0
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	syreclabs.com/go/faker v1.2.3
 )

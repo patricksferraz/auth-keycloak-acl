@@ -22,6 +22,8 @@ variables:
   # vmImageName: 'ubuntu-latest'
   agentPools: Default
 
+  isDev: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+
 stages:
 - stage: BuildTest
   displayName: Build and Test
@@ -31,7 +33,7 @@ stages:
     displayName: Build and Test Auth Service
     strategy:
       matrix:
-        Go116:
+        Go_1_16:
           go.version: '1.16'
     pool: $(agentPools)
       # vmImage: $(vmImageName)
@@ -94,6 +96,7 @@ stages:
       displayName: 'Publish code coverage results'
 
 - stage: PublishImage
+  condition: and(succeeded(), eq(variables.isDev, true))
   displayName: 'Publish Docker Image'
 
   jobs:
@@ -101,7 +104,7 @@ stages:
     displayName: 'Publish Docker Image'
     strategy:
       matrix:
-        Go116:
+        Go_1_16:
           go.version: '1.16'
     pool: $(agentPools)
       # vmImage: $(vmImageName)
