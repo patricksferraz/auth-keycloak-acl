@@ -98,7 +98,7 @@ To get a local copy up and running follow these simple steps.
 
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
-- Create a secret for github docker registry
+- Create a secret for docker registry
 
   ```sh
   kubectl create secret docker-registry regcred \
@@ -193,14 +193,13 @@ __Installation__:
 2. Run
 
    ```sh
-   docker-compose up -d
+   make up
    ```
 
 3. Test
 
    ```sh
-   go test -v -coverprofile cover.out ./...
-   go tool cover -html=cover.out -o cover.html
+   make gtest
    ```
 
 __Installation in local kubernetes__:
@@ -212,12 +211,6 @@ __Installation in local kubernetes__:
     - For the local keycloak, run:
 
       `helm install keycloak codecentric/keycloak`
-
-    - For the local mongodb, run:
-
-      `helm install mongo bitnami/mongodb`
-
-      _add --set auth.enabled=false for no authentication_
 
     - [optional] For the local apm-server, run:
       `helm install apm-server elastic/apm-server`
@@ -233,7 +226,7 @@ __Installation in local kubernetes__:
 <!-- CONTACT -->
 ## Contact
 
-Coding4u - comercial@coding4u.com.br - [website](http://coding4u.com.br)
+Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
 
 Project Link: [auth-service](https://dev.azure.com/c4ut/TimeClock/_git/auth-service)
 
