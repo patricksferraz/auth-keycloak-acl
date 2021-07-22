@@ -11,6 +11,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -19,10 +20,12 @@ jobs:
       with:
         file: .docker/Dockerfile.test
 
-  buildPush:
+  push:
     if: github.event_name != 'pull_request'
+    needs: test
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -33,7 +36,6 @@ jobs:
         DOCKER_IMAGE=ghcr.io/${{ github.repository_owner }}/auth-service
         TAGS="${DOCKER_IMAGE}:${GIT_HASH},${DOCKER_IMAGE}:latest"
         echo ::set-output name=tags::${TAGS}
-        echo ::set-output name=git_hash::${GIT_HASH}
 
     - name: Set up Docker Buildx
       id: buildx
@@ -43,7 +45,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ steps.prep.outputs.git_hash }}
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
 
