@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/model"
+	"github.com/c-4u/auth-service/domain/model"
 )
 
 type AuthRepositoryInterface interface {

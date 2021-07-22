@@ -1,4 +1,4 @@
-module dev.azure.com/c4ut/TimeClock/_git/auth-service
+module github.com/c-4u/auth-service
 
 go 1.16
 
@@ -11,7 +11,6 @@ require (
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.3 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
-	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -36,6 +35,6 @@ require (
 	golang.org/x/tools v0.1.4 // indirect
 	google.golang.org/grpc v1.37.0
 	google.golang.org/grpc/examples v0.0.0-20210507224259-12a377b1e4c9 // indirect
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.27.1
 	syreclabs.com/go/faker v1.2.3
 )

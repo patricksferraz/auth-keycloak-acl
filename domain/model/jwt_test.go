@@ -3,7 +3,7 @@ package model_test
 import (
 	"testing"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/model"
+	"github.com/c-4u/auth-service/domain/model"
 	"github.com/stretchr/testify/require"
 	"syreclabs.com/go/faker"
 )

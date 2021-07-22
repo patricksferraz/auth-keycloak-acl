@@ -22,7 +22,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://dev.azure.com/c4ut/TimeClock/_git/auth-service">
+  <a href="https://github.com/c-4u/auth-service">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -31,14 +31,14 @@
   <p align="center">
     Microservice that provides an anti-corruption layer for authentication of microservices using keycloak
     <br />
-    <a href="https://dev.azure.com/c4ut/TimeClock/_git/auth-service"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/c-4u/auth-service"><strong>Explore the docs »</strong></a>
     <!-- <br />
     <br />
-    <a href="https://dev.azure.com/c4ut/TimeClock/_git/auth-service">View Demo</a>
+    <a href="https://github.com/c-4u/auth-service">View Demo</a>
     ·
-    <a href="https://dev.azure.com/c4ut/TimeClock/_git/auth-service">Report Bug</a>
+    <a href="https://github.com/c-4u/auth-service">Report Bug</a>
     ·
-    <a href="https://dev.azure.com/c4ut/TimeClock/_git/auth-service">Request Feature</a>-->
+    <a href="https://github.com/c-4u/auth-service">Request Feature</a>-->
   </p>
 </p>
 
@@ -134,7 +134,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_ --
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://dev.azure.com/c4ut/TimeClock/_backlogs/backlog/TimeClock%20Team/Epics) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/c-4u/auth-service/issues) for a list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -187,7 +187,7 @@ __Installation__:
 1. Clone the repo
 
    ```sh
-   git clone https://dev.azure.com/c4ut/TimeClock/_git/auth-service.git
+   git clone https://github.com/c-4u/auth-service.git
    ```
 
 2. Run
@@ -228,7 +228,7 @@ __Installation in local kubernetes__:
 
 Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
 
-Project Link: [auth-service](https://dev.azure.com/c4ut/TimeClock/_git/auth-service)
+Project Link: [auth-service](https://github.com/c-4u/auth-service)
 
 <!-- ACKNOWLEDGEMENTS -->
 <!-- ## Acknowledgements

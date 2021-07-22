@@ -16,9 +16,9 @@ limitations under the License.
 package cmd
 
 import (
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/application/grpc"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/application/rest"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/infrastructure/external"
+	"github.com/c-4u/auth-service/application/grpc"
+	"github.com/c-4u/auth-service/application/rest"
+	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/spf13/cobra"
 )
 

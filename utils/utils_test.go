@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/utils"
+	"github.com/c-4u/auth-service/utils"
 	"github.com/stretchr/testify/require"
 	"syreclabs.com/go/faker"
 )
