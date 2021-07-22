@@ -3,8 +3,8 @@ package rest
 import (
 	http "net/http"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/service"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/logger"
+	"github.com/c-4u/auth-service/domain/service"
+	"github.com/c-4u/auth-service/logger"
 	"github.com/gin-gonic/gin"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"

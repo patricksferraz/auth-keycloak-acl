@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/model"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/repository"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/logger"
+	"github.com/c-4u/auth-service/domain/model"
+	"github.com/c-4u/auth-service/domain/repository"
+	"github.com/c-4u/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )

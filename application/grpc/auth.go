@@ -3,9 +3,9 @@ package grpc
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/application/grpc/pb"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/domain/service"
-	"dev.azure.com/c4ut/TimeClock/_git/auth-service/logger"
+	"github.com/c-4u/auth-service/application/grpc/pb"
+	"github.com/c-4u/auth-service/domain/service"
+	"github.com/c-4u/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )

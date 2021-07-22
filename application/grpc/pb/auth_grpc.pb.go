@@ -33,7 +33,7 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 
 func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWT, error) {
 	out := new(JWT)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.AuthService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 
 func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*JWT, error) {
 	out := new(JWT)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.AuthService/RefreshToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/RefreshToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRe
 
 func (c *authServiceClient) FindClaimsByToken(ctx context.Context, in *FindClaimsByTokenRequest, opts ...grpc.CallOption) (*Claims, error) {
 	out := new(Claims)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.AuthService/FindClaimsByToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/FindClaimsByToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.AuthService/Login",
+		FullMethod: "/github.com.c_4u.AuthService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).Login(ctx, req.(*LoginRequest))
@@ -122,7 +122,7 @@ func _AuthService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.AuthService/RefreshToken",
+		FullMethod: "/github.com.c_4u.AuthService/RefreshToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
@@ -140,7 +140,7 @@ func _AuthService_FindClaimsByToken_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.AuthService/FindClaimsByToken",
+		FullMethod: "/github.com.c_4u.AuthService/FindClaimsByToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).FindClaimsByToken(ctx, req.(*FindClaimsByTokenRequest))
@@ -152,7 +152,7 @@ func _AuthService_FindClaimsByToken_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "dev.azure.com.c4ut.TimeClock.AuthService",
+	ServiceName: "github.com.c_4u.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
