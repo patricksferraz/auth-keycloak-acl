@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  auth-service-test:
+  auth-keycloak-acl-test:
     build:
       context: .
       dockerfile: .docker/Dockerfile.test
