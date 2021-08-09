@@ -34,7 +34,7 @@ message Claims {
     repeated string roles = 2;
 }
 
-service AuthService {
+service AuthKeycloakAcl {
     rpc Login (LoginRequest) returns (JWT);
     rpc RefreshToken (RefreshTokenRequest) returns (JWT);
     rpc FindClaimsByToken (FindClaimsByTokenRequest) returns (Claims);

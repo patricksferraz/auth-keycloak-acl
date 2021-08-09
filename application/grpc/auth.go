@@ -11,7 +11,7 @@ import (
 )
 
 type AuthGrpcService struct {
-	pb.UnimplementedAuthServiceServer
+	pb.UnimplementedAuthKeycloakAclServer
 	AuthService *service.AuthService
 }
 

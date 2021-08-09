@@ -23,7 +23,7 @@ func StartGrpcServer(_service *external.Keycloak, port int) {
 	authRepository := repository.NewAuthRepository(_service)
 	authService := service.NewAuthService(authRepository)
 	authGrpcService := NewAuthGrpcService(authService)
-	pb.RegisterAuthServiceServer(grpcServer, authGrpcService)
+	pb.RegisterAuthKeycloakAclServer(grpcServer, authGrpcService)
 
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	listener, err := net.Listen("tcp", address)
