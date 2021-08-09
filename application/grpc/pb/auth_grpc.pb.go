@@ -14,158 +14,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// AuthServiceClient is the client API for AuthService service.
+// AuthKeycloakAclClient is the client API for AuthKeycloakAcl service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AuthServiceClient interface {
+type AuthKeycloakAclClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWT, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*JWT, error)
 	FindClaimsByToken(ctx context.Context, in *FindClaimsByTokenRequest, opts ...grpc.CallOption) (*Claims, error)
 }
 
-type authServiceClient struct {
+type authKeycloakAclClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
-	return &authServiceClient{cc}
+func NewAuthKeycloakAclClient(cc grpc.ClientConnInterface) AuthKeycloakAclClient {
+	return &authKeycloakAclClient{cc}
 }
 
-func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWT, error) {
+func (c *authKeycloakAclClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWT, error) {
 	out := new(JWT)
-	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthKeycloakAcl/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*JWT, error) {
+func (c *authKeycloakAclClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*JWT, error) {
 	out := new(JWT)
-	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/RefreshToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthKeycloakAcl/RefreshToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authServiceClient) FindClaimsByToken(ctx context.Context, in *FindClaimsByTokenRequest, opts ...grpc.CallOption) (*Claims, error) {
+func (c *authKeycloakAclClient) FindClaimsByToken(ctx context.Context, in *FindClaimsByTokenRequest, opts ...grpc.CallOption) (*Claims, error) {
 	out := new(Claims)
-	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthService/FindClaimsByToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthKeycloakAcl/FindClaimsByToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AuthServiceServer is the server API for AuthService service.
-// All implementations must embed UnimplementedAuthServiceServer
+// AuthKeycloakAclServer is the server API for AuthKeycloakAcl service.
+// All implementations must embed UnimplementedAuthKeycloakAclServer
 // for forward compatibility
-type AuthServiceServer interface {
+type AuthKeycloakAclServer interface {
 	Login(context.Context, *LoginRequest) (*JWT, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*JWT, error)
 	FindClaimsByToken(context.Context, *FindClaimsByTokenRequest) (*Claims, error)
-	mustEmbedUnimplementedAuthServiceServer()
+	mustEmbedUnimplementedAuthKeycloakAclServer()
 }
 
-// UnimplementedAuthServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedAuthServiceServer struct {
+// UnimplementedAuthKeycloakAclServer must be embedded to have forward compatible implementations.
+type UnimplementedAuthKeycloakAclServer struct {
 }
 
-func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*JWT, error) {
+func (UnimplementedAuthKeycloakAclServer) Login(context.Context, *LoginRequest) (*JWT, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*JWT, error) {
+func (UnimplementedAuthKeycloakAclServer) RefreshToken(context.Context, *RefreshTokenRequest) (*JWT, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedAuthServiceServer) FindClaimsByToken(context.Context, *FindClaimsByTokenRequest) (*Claims, error) {
+func (UnimplementedAuthKeycloakAclServer) FindClaimsByToken(context.Context, *FindClaimsByTokenRequest) (*Claims, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindClaimsByToken not implemented")
 }
-func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
+func (UnimplementedAuthKeycloakAclServer) mustEmbedUnimplementedAuthKeycloakAclServer() {}
 
-// UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AuthServiceServer will
+// UnsafeAuthKeycloakAclServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthKeycloakAclServer will
 // result in compilation errors.
-type UnsafeAuthServiceServer interface {
-	mustEmbedUnimplementedAuthServiceServer()
+type UnsafeAuthKeycloakAclServer interface {
+	mustEmbedUnimplementedAuthKeycloakAclServer()
 }
 
-func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
-	s.RegisterService(&AuthService_ServiceDesc, srv)
+func RegisterAuthKeycloakAclServer(s grpc.ServiceRegistrar, srv AuthKeycloakAclServer) {
+	s.RegisterService(&AuthKeycloakAcl_ServiceDesc, srv)
 }
 
-func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthKeycloakAcl_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).Login(ctx, in)
+		return srv.(AuthKeycloakAclServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/github.com.c_4u.AuthService/Login",
+		FullMethod: "/github.com.c_4u.AuthKeycloakAcl/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).Login(ctx, req.(*LoginRequest))
+		return srv.(AuthKeycloakAclServer).Login(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthKeycloakAcl_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RefreshTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).RefreshToken(ctx, in)
+		return srv.(AuthKeycloakAclServer).RefreshToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/github.com.c_4u.AuthService/RefreshToken",
+		FullMethod: "/github.com.c_4u.AuthKeycloakAcl/RefreshToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+		return srv.(AuthKeycloakAclServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_FindClaimsByToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthKeycloakAcl_FindClaimsByToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FindClaimsByTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).FindClaimsByToken(ctx, in)
+		return srv.(AuthKeycloakAclServer).FindClaimsByToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/github.com.c_4u.AuthService/FindClaimsByToken",
+		FullMethod: "/github.com.c_4u.AuthKeycloakAcl/FindClaimsByToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).FindClaimsByToken(ctx, req.(*FindClaimsByTokenRequest))
+		return srv.(AuthKeycloakAclServer).FindClaimsByToken(ctx, req.(*FindClaimsByTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
+// AuthKeycloakAcl_ServiceDesc is the grpc.ServiceDesc for AuthKeycloakAcl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "github.com.c_4u.AuthService",
-	HandlerType: (*AuthServiceServer)(nil),
+var AuthKeycloakAcl_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "github.com.c_4u.AuthKeycloakAcl",
+	HandlerType: (*AuthKeycloakAclServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Login",
-			Handler:    _AuthService_Login_Handler,
+			Handler:    _AuthKeycloakAcl_Login_Handler,
 		},
 		{
 			MethodName: "RefreshToken",
-			Handler:    _AuthService_RefreshToken_Handler,
+			Handler:    _AuthKeycloakAcl_RefreshToken_Handler,
 		},
 		{
 			MethodName: "FindClaimsByToken",
-			Handler:    _AuthService_FindClaimsByToken_Handler,
+			Handler:    _AuthKeycloakAcl_FindClaimsByToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

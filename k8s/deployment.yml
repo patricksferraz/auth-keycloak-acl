@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: auth
-        image: coding4u.azurecr.io/auth-service
+        image: ghcr.io/c-4u/auth-keycloak-acl:latest
         ports:
         - name: grpc
           containerPort: 50051
