@@ -18,6 +18,37 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloakdb
+      DB_DATABASE: $KEYCLOAK_DB
+      DB_USER: $KEYCLOAK_USERNAME
+      DB_SCHEMA: public
+      DB_PASSWORD: $KEYCLOAK_PASSWORD
+      KEYCLOAK_USER: $KEYCLOAK_USERNAME
+      KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      # JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8080:8080
+    depends_on:
+      - keycloakdb
+    networks:
+      - auth
+
+  keycloakdb:
+    image: postgres
+    volumes:
+      - pgauthdb:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: $KEYCLOAK_DB
+      POSTGRES_USER: $KEYCLOAK_USERNAME
+      POSTGRES_PASSWORD: $KEYCLOAK_PASSWORD
+    networks:
+      - auth
+
 networks:
   auth:
     driver: bridge

@@ -16,8 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"github.com/c-4u/auth-service/application/rest"
 	"github.com/c-4u/auth-service/infrastructure/external"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +36,13 @@ func NewRestCmd() *cobra.Command {
 		Short: "Run rest Service",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			service := external.ConnectKeycloak()
+			service := external.NewKeycloak(
+				os.Getenv("KEYCLOAK_BASE_PATH"),
+				os.Getenv("KEYCLOAK_REALM"),
+				os.Getenv("KEYCLOAK_CLIENT_ID"),
+				os.Getenv("KEYCLOAK_CLIENT_SECRET"),
+				os.Getenv("KEYCLOAK_AUDIENCE"),
+			)
 			rest.StartRestServer(service, restPort)
 		},
 	}
@@ -41,6 +53,16 @@ func NewRestCmd() *cobra.Command {
 }
 
 func init() {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+
+	if os.Getenv("ENV") == "dev" {
+		err := godotenv.Load(basepath + "/../.env")
+		if err != nil {
+			log.Printf("Error loading .env files")
+		}
+	}
+
 	rootCmd.AddCommand(NewRestCmd())
 
 	// Here you will define your flags and configuration settings.

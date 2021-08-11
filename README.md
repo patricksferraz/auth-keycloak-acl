@@ -170,16 +170,17 @@ __Prerequisites__:
   AUTH_GRPC_PORT=50051
   AUTH_REST_PORT=8088
 
-  AUTHDB_DB=keycloak
-  AUTHDB_USERNAME=keycloak
-  AUTHDB_PASSWORD=password
-
-  KEYCLOAK_USERNAME=admin
-  KEYCLOAK_PASSWORD=Pa55w0rd
   KEYCLOAK_BASE_PATH=http://keycloak:8080
-  KEYCLOAK_REALM=keycloak_realm
-  KEYCLOAK_CLIENT_ID=keycloak_client_id
-  KEYCLOAK_CLIENT_SECRET=keycloak_client_secret
+  KEYCLOAK_REALM=realm
+  KEYCLOAK_CLIENT_ID=client
+  KEYCLOAK_CLIENT_SECRET=4efc7d46-12fb-4d97-9d18-d95f8c38b7b7
+  KEYCLOAK_AUDIENCE=account
+
+  KEYCLOAK_DB=keycloak
+  KEYCLOAK_USERNAME=username
+  KEYCLOAK_PASSWORD=password
+
+  ELASTIC_APM_SERVER_URL=http://apm-server:8200
   ```
 
 __Installation__:

@@ -1,17 +1,10 @@
 package external
 
 import (
-	"log"
-	"os"
-	"path/filepath"
-	"runtime"
-
 	"github.com/Nerzal/gocloak/v8"
-	"github.com/joho/godotenv"
 )
 
 type Keycloak struct {
-	BasePath     string
 	Realm        string
 	ClientID     string
 	ClientSecret string
@@ -19,29 +12,14 @@ type Keycloak struct {
 	Client       gocloak.GoCloak
 }
 
-// TODO: Adds cover test
-func init() {
-	_, b, _, _ := runtime.Caller(0)
-	basepath := filepath.Dir(b)
-
-	if os.Getenv("ENV") == "dev" {
-		err := godotenv.Load(basepath + "/../../.env")
-		if err != nil {
-			log.Fatal("Error loading .env files")
-		}
-	}
-
-}
-
-func ConnectKeycloak() *Keycloak {
+func NewKeycloak(basePath, realm, clientID, clientSecret, audience string) *Keycloak {
 	k := &Keycloak{
-		BasePath:     os.Getenv("KEYCLOAK_BASE_PATH"),
-		Realm:        os.Getenv("KEYCLOAK_REALM"),
-		ClientID:     os.Getenv("KEYCLOAK_CLIENT_ID"),
-		ClientSecret: os.Getenv("KEYCLOAK_CLIENT_SECRET"),
-		Audience:     os.Getenv("KEYCLOAK_AUDIENCE"),
+		Realm:        realm,
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Audience:     audience,
 	}
-	k.Client = gocloak.NewClient(k.BasePath)
+	k.Client = gocloak.NewClient(basePath)
 
 	return k
 }
