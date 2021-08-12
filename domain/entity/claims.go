@@ -1,4 +1,4 @@
-package model
+package entity
 
 import (
 	"github.com/asaskevich/govalidator"
@@ -9,8 +9,8 @@ func init() {
 }
 
 type Claims struct {
-	EmployeeID string   `json:"employee_id" mapstructure:"sub" valid:"uuid"`
-	Roles      []string `json:"roles,omitempty" mapstructure:"roles" valid:"-"`
+	UserID string   `json:"user_id" mapstructure:"sub" valid:"uuid"`
+	Roles  []string `json:"roles,omitempty" mapstructure:"roles" valid:"-"`
 }
 
 func (e *Claims) isValid() error {
@@ -18,11 +18,11 @@ func (e *Claims) isValid() error {
 	return err
 }
 
-func NewClaims(employeeID string, roles []string) (*Claims, error) {
+func NewClaims(userID string, roles []string) (*Claims, error) {
 
 	claims := Claims{
-		EmployeeID: employeeID,
-		Roles:      roles,
+		UserID: userID,
+		Roles:  roles,
 	}
 
 	err := claims.isValid()

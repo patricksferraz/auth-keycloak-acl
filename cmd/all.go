@@ -16,9 +16,16 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"github.com/c-4u/auth-service/application/grpc"
 	"github.com/c-4u/auth-service/application/rest"
 	"github.com/c-4u/auth-service/infrastructure/external"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -32,9 +39,26 @@ func NewAllCmd() *cobra.Command {
 		Short: "Run both gRPC and rest servers",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			service := external.ConnectKeycloak()
-			go rest.StartRestServer(service, restPort)
-			grpc.StartGrpcServer(service, grpcPort)
+			service := external.NewKeycloak(
+				os.Getenv("KEYCLOAK_BASE_PATH"),
+				os.Getenv("KEYCLOAK_REALM"),
+				os.Getenv("KEYCLOAK_CLIENT_ID"),
+				os.Getenv("KEYCLOAK_CLIENT_SECRET"),
+				os.Getenv("KEYCLOAK_AUDIENCE"),
+			)
+
+			deliveryChan := make(chan ckafka.Event)
+			kafka, err := external.NewKafka(
+				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
+				deliveryChan,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			go kafka.DeliveryReport()
+			go rest.StartRestServer(service, kafka, restPort)
+			grpc.StartGrpcServer(service, kafka, grpcPort)
 		},
 	}
 
@@ -45,6 +69,16 @@ func NewAllCmd() *cobra.Command {
 }
 
 func init() {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+
+	if os.Getenv("ENV") == "dev" {
+		err := godotenv.Load(basepath + "/../.env")
+		if err != nil {
+			log.Printf("Error loading .env files")
+		}
+	}
+
 	rootCmd.AddCommand(NewAllCmd())
 
 	// Here you will define your flags and configuration settings.
