@@ -3,32 +3,40 @@ package repository
 import (
 	"context"
 
-	"github.com/c-4u/auth-service/domain/model"
+	"github.com/Nerzal/gocloak/v8"
+	"github.com/c-4u/auth-service/domain/entity"
 	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/c-4u/auth-service/logger"
+	"github.com/c-4u/auth-service/utils"
 	"github.com/mitchellh/mapstructure"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )
 
-type AuthRepository struct {
-	Service *external.Keycloak
+type Repository struct {
+	K *external.Keycloak
 }
 
-func (a *AuthRepository) Login(ctx context.Context, auth *model.Auth) (*model.JWT, error) {
+func NewRepository(keycloak *external.Keycloak) *Repository {
+	return &Repository{
+		K: keycloak,
+	}
+}
+
+func (r *Repository) Login(ctx context.Context, auth *entity.Auth) (*entity.JWT, error) {
 	span, ctx := apm.StartSpan(ctx, "Login", "repository")
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 
-	jwt, err := a.Service.Client.Login(ctx, a.Service.ClientID, a.Service.ClientSecret, a.Service.Realm, auth.Username, auth.Password)
+	jwt, err := r.K.Client.Login(ctx, r.K.ClientID, r.K.ClientSecret, r.K.Realm, auth.Username, auth.Password)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
 
-	return &model.JWT{
+	return &entity.JWT{
 		AccessToken:      jwt.AccessToken,
 		IDToken:          jwt.IDToken,
 		ExpiresIn:        jwt.ExpiresIn,
@@ -41,20 +49,20 @@ func (a *AuthRepository) Login(ctx context.Context, auth *model.Auth) (*model.JW
 	}, nil
 }
 
-func (a *AuthRepository) RefreshToken(ctx context.Context, refreshToken string) (*model.JWT, error) {
+func (r *Repository) RefreshToken(ctx context.Context, refreshToken string) (*entity.JWT, error) {
 	span, ctx := apm.StartSpan(ctx, "RefreshToken", "repository")
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 
-	jwt, err := a.Service.Client.RefreshToken(ctx, refreshToken, a.Service.ClientID, a.Service.ClientSecret, a.Service.Realm)
+	jwt, err := r.K.Client.RefreshToken(ctx, refreshToken, r.K.ClientID, r.K.ClientSecret, r.K.Realm)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
 
-	return &model.JWT{
+	return &entity.JWT{
 		AccessToken:      jwt.AccessToken,
 		IDToken:          jwt.IDToken,
 		ExpiresIn:        jwt.ExpiresIn,
@@ -67,20 +75,20 @@ func (a *AuthRepository) RefreshToken(ctx context.Context, refreshToken string) 
 	}, nil
 }
 
-func (a *AuthRepository) FindClaimsByToken(ctx context.Context, accessToken string) (*model.Claims, error) {
+func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) (*entity.Claims, error) {
 	span, ctx := apm.StartSpan(ctx, "FindClaimsByToken", "repository")
 	defer span.End()
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 
-	jwt, _, err := a.Service.Client.DecodeAccessToken(ctx, accessToken, a.Service.Realm, a.Service.Audience)
+	jwt, _, err := r.K.Client.DecodeAccessToken(ctx, accessToken, r.K.Realm, r.K.Audience)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
 		return nil, err
 	}
 
-	Claims := new(model.Claims)
+	Claims := new(entity.Claims)
 	mapstructure.Decode(jwt.Claims, Claims)
 	log.WithField("claims", Claims).Info("claims mapstructure")
 
@@ -91,15 +99,34 @@ func (a *AuthRepository) FindClaimsByToken(ctx context.Context, accessToken stri
 	ra := new(ResourceAccess)
 	mapstructure.Decode(jwt.Claims, ra)
 
-	roles := ra.ResourceAccess[a.Service.ClientID]["roles"]
+	roles := ra.ResourceAccess[r.K.ClientID]["roles"]
 	Claims.Roles = roles
 	log.WithField("claims", Claims).Info("claims with roles")
 
 	return Claims, nil
 }
 
-func NewAuthRepository(service *external.Keycloak) *AuthRepository {
-	return &AuthRepository{
-		Service: service,
+func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {
+	gUser := gocloak.User{
+		Username:      &user.Username,
+		FirstName:     &user.FirstName,
+		LastName:      &user.LastName,
+		Email:         &user.Email,
+		Enabled:       &user.Enabled,
+		EmailVerified: &user.EmailVerified,
 	}
+	gUser.Attributes = utils.StructToAttr(gUser)
+
+	userID, err := r.K.Client.CreateUser(ctx, accessToken, r.K.Realm, gUser)
+	if err != nil {
+		return err
+	}
+
+	user.ID = userID
+	return nil
+}
+
+func (r *Repository) SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error {
+	err := r.K.Client.SetPassword(ctx, accessToken, pass.UserID, r.K.Realm, pass.Password, pass.Temporary)
+	return err
 }

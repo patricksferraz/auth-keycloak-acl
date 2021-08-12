@@ -8,18 +8,26 @@ import (
 	"github.com/c-4u/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-type AuthGrpcService struct {
+type GrpcService struct {
 	pb.UnimplementedAuthKeycloakAclServer
-	AuthService *service.AuthService
+	Service *service.Service
 }
 
-func (a *AuthGrpcService) Login(ctx context.Context, in *pb.LoginRequest) (*pb.JWT, error) {
+func NewGrpcService(service *service.Service) *GrpcService {
+	return &GrpcService{
+		Service: service,
+	}
+}
+
+func (s *GrpcService) Login(ctx context.Context, in *pb.LoginRequest) (*pb.JWT, error) {
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 	log.WithField("in", in).Info("handling Login request")
 
-	jwt, err := a.AuthService.Login(ctx, in.Username, in.Password)
+	jwt, err := s.Service.Login(ctx, in.Username, in.Password)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -39,11 +47,11 @@ func (a *AuthGrpcService) Login(ctx context.Context, in *pb.LoginRequest) (*pb.J
 	}, err
 }
 
-func (a *AuthGrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*pb.JWT, error) {
+func (s *GrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (*pb.JWT, error) {
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 	log.WithField("in", in).Info("handling RefreshToken request")
 
-	jwt, err := a.AuthService.RefreshToken(ctx, in.RefreshToken)
+	jwt, err := s.Service.RefreshToken(ctx, in.RefreshToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -63,11 +71,11 @@ func (a *AuthGrpcService) RefreshToken(ctx context.Context, in *pb.RefreshTokenR
 	}, err
 }
 
-func (a *AuthGrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClaimsByTokenRequest) (*pb.Claims, error) {
+func (s *GrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClaimsByTokenRequest) (*pb.Claims, error) {
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
 	log.WithField("in", in).Info("handling FindClaimsByToken request")
 
-	claims, err := a.AuthService.FindClaimsByToken(ctx, in.AccessToken)
+	claims, err := s.Service.FindClaimsByToken(ctx, in.AccessToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -80,8 +88,27 @@ func (a *AuthGrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClai
 	}, nil
 }
 
-func NewAuthGrpcService(service *service.AuthService) *AuthGrpcService {
-	return &AuthGrpcService{
-		AuthService: service,
+func (s *GrpcService) CreateUser(ctx context.Context, in *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	userID, err := s.Service.CreateUser(ctx, in.User.Username, in.User.FirstName, in.User.LastName, in.User.Email, in.User.Enabled, in.User.EmailVerified, in.User.EmployeeId, in.AccessToken)
+	if err != nil {
+		return &pb.CreateUserResponse{}, err
 	}
+
+	return &pb.CreateUserResponse{
+		Id: *userID,
+	}, nil
+}
+
+func (s *GrpcService) SetPassword(ctx context.Context, in *pb.SetPasswordRequest) (*pb.StatusResponse, error) {
+	err := s.Service.SetPassword(ctx, in.UserId, in.Password, in.Temporary, in.AccessToken)
+	if err != nil {
+		return &pb.StatusResponse{
+			Code:  uint32(status.Code(err)),
+			Error: err.Error(),
+		}, err
+	}
+	return &pb.StatusResponse{
+		Code:    uint32(codes.OK),
+		Message: "password updated successfully",
+	}, nil
 }

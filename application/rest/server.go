@@ -24,23 +24,23 @@ import (
 // @contact.email contato@coding4u.com.br
 
 // @BasePath /api/v1
-func StartRestServer(service *external.Keycloak, port int) {
+func StartRestServer(keycloak *external.Keycloak, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 	r.Use(apmgin.Middleware(r))
 
-	authRepository := repository.NewAuthRepository(service)
-	authService := _service.NewAuthService(authRepository)
-	authRestService := NewAuthRestService(authService)
+	repository := repository.NewRepository(keycloak)
+	service := _service.NewService(repository)
+	restService := NewRestService(service)
 
 	v1 := r.Group("api/v1/auth")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		v1.POST("/login", authRestService.Login)
-		v1.POST("/refresh-token", authRestService.RefreshToken)
-		v1.POST("/claims", authRestService.FindClaimsByToken)
+		v1.POST("/login", restService.Login)
+		v1.POST("/refresh-token", restService.RefreshToken)
+		v1.POST("/claims", restService.FindClaimsByToken)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

@@ -10,8 +10,8 @@ import (
 	"go.elastic.co/apm/module/apmlogrus"
 )
 
-type AuthRestService struct {
-	AuthService *service.AuthService
+type RestService struct {
+	Service *service.Service
 }
 
 // Login godoc
@@ -25,7 +25,7 @@ type AuthRestService struct {
 // @Success 200 {object} JWT
 // @Failure 401 {object} HTTPError
 // @Router /auth/login [post]
-func (a *AuthRestService) Login(ctx *gin.Context) {
+func (a *RestService) Login(ctx *gin.Context) {
 	var json Auth
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -37,7 +37,7 @@ func (a *AuthRestService) Login(ctx *gin.Context) {
 		return
 	}
 
-	jwt, err := a.AuthService.Login(ctx, json.Username, json.Password)
+	jwt, err := a.Service.Login(ctx, json.Username, json.Password)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -59,7 +59,7 @@ func (a *AuthRestService) Login(ctx *gin.Context) {
 // @Success 200 {object} JWT
 // @Failure 400 {object} HTTPError
 // @Router /auth/refresh-token [post]
-func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
+func (a *RestService) RefreshToken(ctx *gin.Context) {
 	var json RefreshToken
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -71,7 +71,7 @@ func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	jwt, err := a.AuthService.RefreshToken(ctx, json.RefreshToken)
+	jwt, err := a.Service.RefreshToken(ctx, json.RefreshToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -94,7 +94,7 @@ func (a *AuthRestService) RefreshToken(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Router /auth/claims [post]
-func (a *AuthRestService) FindClaimsByToken(ctx *gin.Context) {
+func (a *RestService) FindClaimsByToken(ctx *gin.Context) {
 	var json AccessToken
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -106,7 +106,7 @@ func (a *AuthRestService) FindClaimsByToken(ctx *gin.Context) {
 		return
 	}
 
-	claims, err := a.AuthService.FindClaimsByToken(ctx, json.AccessToken)
+	claims, err := a.Service.FindClaimsByToken(ctx, json.AccessToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -117,8 +117,8 @@ func (a *AuthRestService) FindClaimsByToken(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, claims)
 }
 
-func NewAuthRestService(service *service.AuthService) *AuthRestService {
-	return &AuthRestService{
-		AuthService: service,
+func NewRestService(service *service.Service) *RestService {
+	return &RestService{
+		Service: service,
 	}
 }

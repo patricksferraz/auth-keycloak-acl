@@ -1,15 +1,15 @@
-package model_test
+package entity_test
 
 import (
 	"testing"
 
-	"github.com/c-4u/auth-service/domain/model"
+	"github.com/c-4u/auth-service/domain/entity"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 	"syreclabs.com/go/faker"
 )
 
-func TestModel_NewEmployee(t *testing.T) {
+func TestModel_NewClaims(t *testing.T) {
 
 	employeeID := uuid.NewV4().String()
 	count := faker.Number().NumberInt(2)
@@ -19,12 +19,12 @@ func TestModel_NewEmployee(t *testing.T) {
 		roles = append(roles, faker.Lorem().Word())
 	}
 
-	claims, err := model.NewClaims(employeeID, roles)
+	claims, err := entity.NewClaims(employeeID, roles)
 
 	require.Nil(t, err)
 	require.NotEmpty(t, uuid.FromStringOrNil(claims.EmployeeID))
 	require.Equal(t, claims.Roles, roles)
 
-	_, err = model.NewClaims("", roles)
+	_, err = entity.NewClaims("", roles)
 	require.NotNil(t, err)
 }

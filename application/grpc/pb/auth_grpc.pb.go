@@ -21,6 +21,8 @@ type AuthKeycloakAclClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWT, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*JWT, error)
 	FindClaimsByToken(ctx context.Context, in *FindClaimsByTokenRequest, opts ...grpc.CallOption) (*Claims, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type authKeycloakAclClient struct {
@@ -58,6 +60,24 @@ func (c *authKeycloakAclClient) FindClaimsByToken(ctx context.Context, in *FindC
 	return out, nil
 }
 
+func (c *authKeycloakAclClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthKeycloakAcl/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authKeycloakAclClient) SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.AuthKeycloakAcl/SetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthKeycloakAclServer is the server API for AuthKeycloakAcl service.
 // All implementations must embed UnimplementedAuthKeycloakAclServer
 // for forward compatibility
@@ -65,6 +85,8 @@ type AuthKeycloakAclServer interface {
 	Login(context.Context, *LoginRequest) (*JWT, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*JWT, error)
 	FindClaimsByToken(context.Context, *FindClaimsByTokenRequest) (*Claims, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedAuthKeycloakAclServer()
 }
 
@@ -80,6 +102,12 @@ func (UnimplementedAuthKeycloakAclServer) RefreshToken(context.Context, *Refresh
 }
 func (UnimplementedAuthKeycloakAclServer) FindClaimsByToken(context.Context, *FindClaimsByTokenRequest) (*Claims, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindClaimsByToken not implemented")
+}
+func (UnimplementedAuthKeycloakAclServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedAuthKeycloakAclServer) SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
 }
 func (UnimplementedAuthKeycloakAclServer) mustEmbedUnimplementedAuthKeycloakAclServer() {}
 
@@ -148,6 +176,42 @@ func _AuthKeycloakAcl_FindClaimsByToken_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthKeycloakAcl_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthKeycloakAclServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/github.com.c_4u.AuthKeycloakAcl/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthKeycloakAclServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthKeycloakAcl_SetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthKeycloakAclServer).SetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/github.com.c_4u.AuthKeycloakAcl/SetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthKeycloakAclServer).SetPassword(ctx, req.(*SetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthKeycloakAcl_ServiceDesc is the grpc.ServiceDesc for AuthKeycloakAcl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,6 +230,14 @@ var AuthKeycloakAcl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindClaimsByToken",
 			Handler:    _AuthKeycloakAcl_FindClaimsByToken_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _AuthKeycloakAcl_CreateUser_Handler,
+		},
+		{
+			MethodName: "SetPassword",
+			Handler:    _AuthKeycloakAcl_SetPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

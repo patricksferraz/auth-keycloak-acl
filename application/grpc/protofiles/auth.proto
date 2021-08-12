@@ -34,8 +34,43 @@ message Claims {
     repeated string roles = 2;
 }
 
+message CreateUserRequest {
+    User user = 1;
+    string access_token = 2;
+}
+
+message CreateUserResponse {
+    string id = 1;
+}
+
+message User {
+    string id = 1;
+    string username = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string email = 5;
+    bool enabled = 6;
+    bool email_verified = 7;
+    string employee_id = 8;
+}
+
+message SetPasswordRequest {
+    string user_id = 1;
+    string password = 2;
+    bool temporary = 3;
+    string access_token = 4;
+}
+
+message StatusResponse {
+    uint32 code = 1;
+    string message = 2;
+    string error = 3;
+}
+
 service AuthKeycloakAcl {
     rpc Login (LoginRequest) returns (JWT);
     rpc RefreshToken (RefreshTokenRequest) returns (JWT);
     rpc FindClaimsByToken (FindClaimsByTokenRequest) returns (Claims);
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+    rpc SetPassword (SetPasswordRequest) returns (StatusResponse);
 }

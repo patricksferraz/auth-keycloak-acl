@@ -6,7 +6,7 @@ import (
 	"net"
 
 	"github.com/c-4u/auth-service/application/grpc/pb"
-	"github.com/c-4u/auth-service/domain/service"
+	_service "github.com/c-4u/auth-service/domain/service"
 	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/c-4u/auth-service/infrastructure/repository"
 	"go.elastic.co/apm/module/apmgrpc"
@@ -14,16 +14,16 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func StartGrpcServer(_service *external.Keycloak, port int) {
+func StartGrpcServer(keycloak *external.Keycloak, port int) {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(apmgrpc.NewUnaryServerInterceptor(apmgrpc.WithRecovery())),
 	)
 	reflection.Register(grpcServer)
 
-	authRepository := repository.NewAuthRepository(_service)
-	authService := service.NewAuthService(authRepository)
-	authGrpcService := NewAuthGrpcService(authService)
-	pb.RegisterAuthKeycloakAclServer(grpcServer, authGrpcService)
+	repository := repository.NewRepository(keycloak)
+	service := _service.NewService(repository)
+	grpcService := NewGrpcService(service)
+	pb.RegisterAuthKeycloakAclServer(grpcServer, grpcService)
 
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	listener, err := net.Listen("tcp", address)
