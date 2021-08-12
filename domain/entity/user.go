@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
 )
@@ -24,9 +26,11 @@ func NewPasswordInfo(userID, password string, temporary bool) *PasswordInfo {
 }
 
 type User struct {
-	ID         string `json:"id" valid:"uuid"`
-	Username   string `json:"username,omitempty" valid:"required"`
-	EmployeeID string `json:"employee_id,omitempty" attr:"employee_id" valid:"-"`
+	ID         string    `json:"id" valid:"uuid"`
+	Username   string    `json:"username,omitempty" valid:"required"`
+	Enabled    bool      `json:"enabled,omitempty" valid:"-"`
+	EmployeeID string    `json:"employee_id,omitempty" attr:"employee_id" valid:"-"`
+	CreatedAt  time.Time `json:"created_at,omitempty" valid:"-"`
 }
 
 func (e *User) isValid() error {
@@ -39,6 +43,7 @@ func NewUser(username, employeeID string) (*User, error) {
 	user := User{
 		Username:   username,
 		EmployeeID: employeeID,
+		Enabled:    true,
 	}
 	user.ID = uuid.NewV4().String()
 

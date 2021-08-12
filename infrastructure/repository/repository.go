@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/Nerzal/gocloak/v8"
 	"github.com/c-4u/auth-service/domain/entity"
@@ -112,7 +113,7 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {
 	gUser := gocloak.User{
 		Username: &user.Username,
-		Enabled:  gocloak.BoolP(true),
+		Enabled:  &user.Enabled,
 	}
 	gUser.Attributes = utils.StructToAttr(user)
 
@@ -123,6 +124,64 @@ func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessTo
 
 	user.ID = userID
 	return nil
+}
+
+func (r *Repository) FindUser(ctx context.Context, id string, accessToken string) (*entity.User, error) {
+	e, err := r.K.Client.GetUserByID(ctx, accessToken, r.K.Realm, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var employeeID string
+	if e.Attributes != nil {
+		employeeID = (*e.Attributes)["employee_id"][0]
+	}
+
+	user := &entity.User{
+		Username:   *e.Username,
+		Enabled:    *e.Enabled,
+		EmployeeID: employeeID,
+	}
+	user.ID = *e.ID
+	user.CreatedAt = time.Unix(0, *e.CreatedTimestamp*int64(time.Millisecond))
+
+	return user, nil
+}
+
+func (r *Repository) SearchUsers(ctx context.Context, filter *entity.Filter, accessToken string) ([]*entity.User, error) {
+	first := *filter.Page * *filter.PageSize
+	gUsers, err := r.K.Client.GetUsers(
+		ctx,
+		accessToken,
+		r.K.Realm,
+		gocloak.GetUsersParams{
+			Username: filter.Username,
+			Enabled:  filter.Enabled,
+			First:    &first,
+			Max:      filter.PageSize,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*entity.User
+	for _, u := range gUsers {
+		var employeeID string
+		if u.Attributes != nil {
+			employeeID = (*u.Attributes)["employee_id"][0]
+		}
+		user := &entity.User{
+			Username:   *u.Username,
+			Enabled:    *u.Enabled,
+			EmployeeID: employeeID,
+		}
+		user.ID = *u.ID
+		user.CreatedAt = time.Unix(0, *u.CreatedTimestamp*int64(time.Millisecond))
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (r *Repository) SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error {

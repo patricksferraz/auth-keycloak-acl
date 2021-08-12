@@ -95,6 +95,19 @@ definitions:
     required:
     - password
     type: object
+  rest.User:
+    properties:
+      created_at:
+        type: string
+      employee_id:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact:
     email: contato@coding4u.com.br
@@ -189,7 +202,50 @@ paths:
       summary: refresh token
       tags:
       - Auth
-  /user:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Search users by `filter`. if the page and page size are empty,
+        0 and 10 will be considered respectively.
+      operationId: searchUsers
+      parameters:
+      - in: query
+        name: enabled
+        type: boolean
+      - default: 0
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/rest.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: search users by filter
+      tags:
+      - User
     post:
       consumes:
       - application/json
@@ -219,10 +275,42 @@ paths:
             $ref: '#/definitions/rest.HTTPError'
       security:
       - ApiKeyAuth: []
-      summary: create User
+      summary: create user
       tags:
       - User
-  /user/{id}/password:
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find user
+      operationId: findUser
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: find user
+      tags:
+      - User
+  /users/{id}/password:
     post:
       consumes:
       - application/json
@@ -257,7 +345,7 @@ paths:
             $ref: '#/definitions/rest.HTTPError'
       security:
       - ApiKeyAuth: []
-      summary: create User
+      summary: set user password
       tags:
       - User
 securityDefinitions:

@@ -127,7 +127,7 @@ func (s *RestService) FindClaimsByToken(ctx *gin.Context) {
 
 // CreateUser godoc
 // @Security ApiKeyAuth
-// @Summary create User
+// @Summary create user
 // @ID createUser
 // @Tags User
 // @Description Create User
@@ -137,7 +137,7 @@ func (s *RestService) FindClaimsByToken(ctx *gin.Context) {
 // @Success 200 {object} CreateUserResponse
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
-// @Router /user [post]
+// @Router /users [post]
 func (s *RestService) CreateUser(ctx *gin.Context) {
 	var json CreateUserRequest
 
@@ -155,9 +155,93 @@ func (s *RestService) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, CreateUserResponse{ID: *id})
 }
 
+// FindUser godoc
+// @Security ApiKeyAuth
+// @Summary find user
+// @Description Router for find user
+// @ID findUser
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} User
+// @Failure 400 {object} HTTPError
+// @Failure 403 {object} HTTPError
+// @Router /users/{id} [get]
+func (s *RestService) FindUser(ctx *gin.Context) {
+	var req IDRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	user, err := s.Service.FindUser(ctx, req.ID, s.Middleware.AccessToken)
+	if err != nil {
+		ctx.JSON(
+			http.StatusForbidden,
+			HTTPError{
+				Code:  http.StatusForbidden,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}
+
+// SearchUsers godoc
+// @Security ApiKeyAuth
+// @Summary search users by filter
+// @ID searchUsers
+// @Tags User
+// @Description Search users by `filter`. if the page and page size are empty, 0 and 10 will be considered respectively.
+// @Accept json
+// @Produce json
+// @Param body query SearchUsersRequest true "JSON body for search users"
+// @Success 200 {array} User
+// @Failure 400 {object} HTTPError
+// @Failure 403 {object} HTTPError
+// @Router /users [get]
+func (s *RestService) SearchUsers(ctx *gin.Context) {
+	var body SearchUsersRequest
+
+	if err := ctx.ShouldBindQuery(&body); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	users, err := s.Service.SearchUsers(ctx, body.Filter.Username, body.Filter.Enabled, body.Filter.PageSize, body.Filter.Page, s.Middleware.AccessToken)
+	if err != nil {
+		ctx.JSON(
+			http.StatusForbidden,
+			HTTPError{
+				Code:  http.StatusForbidden,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, users)
+}
+
 // SetPassword godoc
 // @Security ApiKeyAuth
-// @Summary create User
+// @Summary set user password
 // @ID setPassword
 // @Tags User
 // @Description Set user password
@@ -168,7 +252,7 @@ func (s *RestService) CreateUser(ctx *gin.Context) {
 // @Success 200 {object} HTTPResponse
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
-// @Router /user/{id}/password [post]
+// @Router /users/{id}/password [post]
 func (s *RestService) SetPassword(ctx *gin.Context) {
 	var req IDRequest
 	var json SetPasswordRequest

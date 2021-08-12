@@ -12,6 +12,8 @@ type RepositoryInterface interface {
 	FindClaimsByToken(ctx context.Context, accessToken string) (*entity.Claims, error)
 
 	CreateUser(ctx context.Context, user *entity.User, accessToken string) error
+	FindUser(ctx context.Context, id string, accessToken string) (*entity.User, error)
+	SearchUsers(ctx context.Context, filter *entity.Filter, accessToken string) ([]*entity.User, error)
 	SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error
 
 	PublishEvent(ctx context.Context, msg, topic, key string) error

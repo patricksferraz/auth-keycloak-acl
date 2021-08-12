@@ -58,10 +58,13 @@ func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port in
 			auth.POST("/claims", restService.FindClaimsByToken)
 		}
 
-		user := v1.Group("/user", authMiddlerare.Require())
+		user := v1.Group("/users", authMiddlerare.Require())
 		{
 			user.POST("", restService.CreateUser)
 			user.POST("/:id/password", restService.SetPassword)
+
+			user.GET("/", restService.SearchUsers)
+			user.GET("/:id", restService.FindUser)
 		}
 	}
 

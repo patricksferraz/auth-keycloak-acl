@@ -1,5 +1,7 @@
 package rest
 
+import "time"
+
 type Auth struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -56,4 +58,23 @@ type SetPasswordRequest struct {
 type HTTPResponse struct {
 	Code    int    `json:"code,omitempty" example:"200"`
 	Message string `json:"message,omitempty" example:"a message"`
+}
+
+type Filter struct {
+	Username *string `json:"username" form:"username"`
+	Enabled  *bool   `json:"enabled" form:"enabled"`
+	PageSize *int    `json:"page_size" form:"page_size" default:"10"`
+	Page     *int    `json:"page" form:"page" default:"0"`
+}
+
+type SearchUsersRequest struct {
+	Filter `json:",inline"`
+}
+
+type User struct {
+	ID         string    `json:"id"`
+	Username   string    `json:"username,omitempty"`
+	Enabled    bool      `json:"enabled,omitempty"`
+	EmployeeID string    `json:"employee_id,omitempty"`
+	CreatedAt  time.Time `json:"created_at,omitempty"`
 }
