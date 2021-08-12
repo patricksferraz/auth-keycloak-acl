@@ -159,6 +159,11 @@ var doc = `{
         },
         "/user": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create User",
                 "consumes": [
                     "application/json"
@@ -206,6 +211,11 @@ var doc = `{
         },
         "/user/{id}/password": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Set user password",
                 "consumes": [
                     "application/json"
@@ -219,6 +229,13 @@ var doc = `{
                 "summary": "create User",
                 "operationId": "setPassword",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "JSON body set user password",
                         "name": "body",
@@ -282,14 +299,14 @@ var doc = `{
         "rest.Claims": {
             "type": "object",
             "properties": {
-                "employee_id": {
-                    "type": "string"
-                },
                 "roles": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -318,6 +335,10 @@ var doc = `{
         "rest.HTTPError": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
                 "error": {
                     "type": "string",
                     "example": "status bad request"
@@ -393,6 +414,13 @@ var doc = `{
                     "type": "boolean"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

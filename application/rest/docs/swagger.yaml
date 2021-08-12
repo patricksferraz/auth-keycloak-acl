@@ -19,12 +19,12 @@ definitions:
     type: object
   rest.Claims:
     properties:
-      employee_id:
-        type: string
       roles:
         items:
           type: string
         type: array
+      user_id:
+        type: string
     type: object
   rest.CreateUserRequest:
     properties:
@@ -42,6 +42,9 @@ definitions:
     type: object
   rest.HTTPError:
     properties:
+      code:
+        example: 400
+        type: integer
       error:
         example: status bad request
         type: string
@@ -214,6 +217,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: create User
       tags:
       - User
@@ -224,6 +229,11 @@ paths:
       description: Set user password
       operationId: setPassword
       parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
       - description: JSON body set user password
         in: body
         name: body
@@ -245,7 +255,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: create User
       tags:
       - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

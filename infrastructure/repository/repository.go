@@ -112,8 +112,9 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {
 	gUser := gocloak.User{
 		Username: &user.Username,
+		Enabled:  gocloak.BoolP(true),
 	}
-	gUser.Attributes = utils.StructToAttr(gUser)
+	gUser.Attributes = utils.StructToAttr(user)
 
 	userID, err := r.K.Client.CreateUser(ctx, accessToken, r.K.Realm, gUser)
 	if err != nil {

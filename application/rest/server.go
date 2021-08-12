@@ -24,6 +24,11 @@ import (
 // @contact.email contato@coding4u.com.br
 
 // @BasePath /api/v1
+// @query.collection.format multi
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
@@ -40,7 +45,7 @@ func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port in
 	repository := repository.NewRepository(keycloak, kafka)
 	service := _service.NewService(repository)
 	authMiddlerare := NewAuthMiddleware(service)
-	restService := NewRestService(service)
+	restService := NewRestService(service, authMiddlerare)
 
 	v1 := r.Group("api/v1")
 	{

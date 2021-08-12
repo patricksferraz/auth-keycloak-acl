@@ -143,6 +143,11 @@
         },
         "/user": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create User",
                 "consumes": [
                     "application/json"
@@ -190,6 +195,11 @@
         },
         "/user/{id}/password": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Set user password",
                 "consumes": [
                     "application/json"
@@ -203,6 +213,13 @@
                 "summary": "create User",
                 "operationId": "setPassword",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "JSON body set user password",
                         "name": "body",
@@ -266,14 +283,14 @@
         "rest.Claims": {
             "type": "object",
             "properties": {
-                "employee_id": {
-                    "type": "string"
-                },
                 "roles": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -302,6 +319,10 @@
         "rest.HTTPError": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
                 "error": {
                     "type": "string",
                     "example": "status bad request"
@@ -377,6 +398,13 @@
                     "type": "boolean"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

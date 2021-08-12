@@ -22,7 +22,7 @@ func TestModel_NewClaims(t *testing.T) {
 	claims, err := entity.NewClaims(employeeID, roles)
 
 	require.Nil(t, err)
-	require.NotEmpty(t, uuid.FromStringOrNil(claims.EmployeeID))
+	require.NotEmpty(t, uuid.FromStringOrNil(claims.UserID))
 	require.Equal(t, claims.Roles, roles)
 
 	_, err = entity.NewClaims("", roles)

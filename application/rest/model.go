@@ -26,12 +26,13 @@ type JWT struct {
 }
 
 type Claims struct {
-	EmployeeID string   `json:"employee_id"`
-	Roles      []string `json:"roles,omitempty"`
+	UserID string   `json:"user_id"`
+	Roles  []string `json:"roles,omitempty"`
 }
 
 type HTTPError struct {
-	Error string `json:"error" example:"status bad request"`
+	Code  int    `json:"code,omitempty" example:"400"`
+	Error string `json:"error,omitempty" example:"status bad request"`
 }
 
 type CreateUserRequest struct {

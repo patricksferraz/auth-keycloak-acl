@@ -181,6 +181,8 @@ __Prerequisites__:
   KEYCLOAK_PASSWORD=password
 
   ELASTIC_APM_SERVER_URL=http://apm-server:8200
+
+  KAFKA_BOOTSTRAP_SERVERS=kafka:9094
   ```
 
 __Installation__:

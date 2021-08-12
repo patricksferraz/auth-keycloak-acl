@@ -30,7 +30,7 @@ message JWT {
 }
 
 message Claims {
-    string employee_id = 1;
+    string user_id = 1;
     repeated string roles = 2;
 }
 

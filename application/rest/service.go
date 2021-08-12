@@ -15,9 +15,10 @@ type RestService struct {
 	Middleware *AuthMiddleware
 }
 
-func NewRestService(service *service.Service) *RestService {
+func NewRestService(service *service.Service, authMiddleware *AuthMiddleware) *RestService {
 	return &RestService{
-		Service: service,
+		Service:    service,
+		Middleware: authMiddleware,
 	}
 }
 
@@ -117,7 +118,7 @@ func (s *RestService) FindClaimsByToken(ctx *gin.Context) {
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusForbidden, HTTPError{Code: http.StatusForbidden, Error: err.Error()})
 		return
 	}
 
@@ -125,6 +126,7 @@ func (s *RestService) FindClaimsByToken(ctx *gin.Context) {
 }
 
 // CreateUser godoc
+// @Security ApiKeyAuth
 // @Summary create User
 // @ID createUser
 // @Tags User
@@ -146,7 +148,7 @@ func (s *RestService) CreateUser(ctx *gin.Context) {
 
 	id, err := s.Service.CreateUser(ctx, json.Username, json.EmployeeID, s.Middleware.AccessToken)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusForbidden, HTTPError{Code: http.StatusForbidden, Error: err.Error()})
 		return
 	}
 
@@ -154,12 +156,14 @@ func (s *RestService) CreateUser(ctx *gin.Context) {
 }
 
 // SetPassword godoc
+// @Security ApiKeyAuth
 // @Summary create User
 // @ID setPassword
 // @Tags User
 // @Description Set user password
 // @Accept json
 // @Produce json
+// @Param id path string true "User ID"
 // @Param body body SetPasswordRequest true "JSON body set user password"
 // @Success 200 {object} HTTPResponse
 // @Failure 400 {object} HTTPError
@@ -169,6 +173,17 @@ func (s *RestService) SetPassword(ctx *gin.Context) {
 	var req IDRequest
 	var json SetPasswordRequest
 
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
 	if err := ctx.ShouldBindJSON(&json); err != nil {
 		ctx.JSON(http.StatusBadRequest, HTTPError{Error: err.Error()})
 		return
@@ -176,7 +191,7 @@ func (s *RestService) SetPassword(ctx *gin.Context) {
 
 	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary, s.Middleware.AccessToken)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, HTTPError{Error: err.Error()})
+		ctx.JSON(http.StatusForbidden, HTTPError{Code: http.StatusForbidden, Error: err.Error()})
 		return
 	}
 
