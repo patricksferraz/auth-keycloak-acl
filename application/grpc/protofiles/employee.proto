@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package github.com.c_4u;
+
+option go_package = "/protofiles;pb";
+
+import "google/protobuf/timestamp.proto";
+
+
+message FindEmployeeRequest {
+    string id = 1;
+}
+
+message FindEmployeeResponse {
+    Employee employee = 1;
+}
+
+message Employee {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string pis = 5;
+    string cpf = 6;
+    bool enabled = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+service EmployeeService {
+    rpc FindEmployee (FindEmployeeRequest) returns (FindEmployeeResponse);
+}

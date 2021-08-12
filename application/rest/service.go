@@ -146,7 +146,7 @@ func (s *RestService) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	id, err := s.Service.CreateUser(ctx, json.Username, json.EmployeeID, s.Middleware.AccessToken)
+	id, err := s.Service.CreateUser(ctx, json.Username, json.EmployeeID, s.Middleware.I.AccessToken)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, HTTPError{Code: http.StatusForbidden, Error: err.Error()})
 		return
@@ -182,7 +182,7 @@ func (s *RestService) FindUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := s.Service.FindUser(ctx, req.ID, s.Middleware.AccessToken)
+	user, err := s.Service.FindUser(ctx, req.ID, s.Middleware.I.AccessToken)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -224,7 +224,7 @@ func (s *RestService) SearchUsers(ctx *gin.Context) {
 		return
 	}
 
-	users, err := s.Service.SearchUsers(ctx, body.Filter.Username, body.Filter.Enabled, body.Filter.PageSize, body.Filter.Page, s.Middleware.AccessToken)
+	users, err := s.Service.SearchUsers(ctx, body.Filter.Username, body.Filter.Enabled, body.Filter.PageSize, body.Filter.Page, s.Middleware.I.AccessToken)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -273,7 +273,7 @@ func (s *RestService) SetPassword(ctx *gin.Context) {
 		return
 	}
 
-	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary, s.Middleware.AccessToken)
+	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary, s.Middleware.I.AccessToken)
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, HTTPError{Code: http.StatusForbidden, Error: err.Error()})
 		return

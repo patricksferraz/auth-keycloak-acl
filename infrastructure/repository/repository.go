@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Nerzal/gocloak/v8"
+	"github.com/c-4u/auth-service/application/grpc/pb"
 	"github.com/c-4u/auth-service/domain/entity"
 	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/c-4u/auth-service/logger"
@@ -16,14 +17,16 @@ import (
 )
 
 type Repository struct {
-	K     *external.Keycloak
-	Kafka *external.Kafka
+	K              *external.Keycloak
+	Kafka          *external.Kafka
+	EmployeeClient *external.EmployeeClient
 }
 
-func NewRepository(keycloak *external.Keycloak, kafka *external.Kafka) *Repository {
+func NewRepository(keycloak *external.Keycloak, kafka *external.Kafka, employeeClient *external.EmployeeClient) *Repository {
 	return &Repository{
-		K:     keycloak,
-		Kafka: kafka,
+		K:              keycloak,
+		Kafka:          kafka,
+		EmployeeClient: employeeClient,
 	}
 }
 
@@ -200,4 +203,12 @@ func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) e
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) FindEmployee(ctx context.Context, employeeID string) error {
+	req := &pb.FindEmployeeRequest{
+		Id: employeeID,
+	}
+	_, err := r.EmployeeClient.C.FindEmployee(ctx, req)
+	return err
 }

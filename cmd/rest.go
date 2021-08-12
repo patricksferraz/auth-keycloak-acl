@@ -54,8 +54,10 @@ func NewRestCmd() *cobra.Command {
 				log.Fatal(err)
 			}
 
+			employeeServiceAddr := os.Getenv("EMPLOYEE_SERVICE_ADDR")
+
 			go kafka.DeliveryReport()
-			rest.StartRestServer(service, kafka, restPort)
+			rest.StartRestServer(service, kafka, employeeServiceAddr, restPort)
 		},
 	}
 

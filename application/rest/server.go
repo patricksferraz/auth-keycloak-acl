@@ -29,7 +29,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port int) {
+func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, employeeServiceAddr string, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -42,9 +42,17 @@ func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port in
 	}))
 	r.Use(apmgin.Middleware(r))
 
-	repository := repository.NewRepository(keycloak, kafka)
+	authInterceptor := external.NewAuthInterceptor()
+	employeeConn, err := external.GrpcClient(employeeServiceAddr, authInterceptor.TransportOpts()...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer employeeConn.Close()
+
+	employeeClient := external.NewEmployeeClient(employeeConn)
+	repository := repository.NewRepository(keycloak, kafka, employeeClient)
 	service := _service.NewService(repository)
-	authMiddlerare := NewAuthMiddleware(service)
+	authMiddlerare := NewAuthMiddleware(service, authInterceptor)
 	restService := NewRestService(service, authMiddlerare)
 
 	v1 := r.Group("api/v1")
@@ -69,7 +77,7 @@ func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port in
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
-	err := r.Run(addr)
+	err = r.Run(addr)
 	if err != nil {
 		log.Fatal("cannot start rest server", err)
 	}

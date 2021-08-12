@@ -83,6 +83,11 @@ func (s *Service) CreateUser(ctx context.Context, username, employeeID, accessTo
 		return nil, err
 	}
 
+	err = s.Repository.FindEmployee(ctx, employeeID)
+	if err != nil {
+		return nil, err
+	}
+
 	err = s.Repository.CreateUser(ctx, user, accessToken)
 	if err != nil {
 		return nil, err

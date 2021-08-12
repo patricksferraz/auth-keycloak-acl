@@ -39,7 +39,7 @@ type HTTPError struct {
 
 type CreateUserRequest struct {
 	Username   string `json:"username" binding:"required"`
-	EmployeeID string `json:"employee_id"`
+	EmployeeID string `json:"employee_id" binding:"required"`
 }
 
 type CreateUserResponse struct {

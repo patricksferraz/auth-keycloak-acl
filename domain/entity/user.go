@@ -29,7 +29,7 @@ type User struct {
 	ID         string    `json:"id" valid:"uuid"`
 	Username   string    `json:"username,omitempty" valid:"required"`
 	Enabled    bool      `json:"enabled,omitempty" valid:"-"`
-	EmployeeID string    `json:"employee_id,omitempty" attr:"employee_id" valid:"-"`
+	EmployeeID string    `json:"employee_id,omitempty" attr:"employee_id" valid:"uuid"`
 	CreatedAt  time.Time `json:"created_at,omitempty" valid:"-"`
 }
 

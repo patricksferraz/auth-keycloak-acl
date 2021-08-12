@@ -6,12 +6,20 @@ import (
 	"net/http"
 
 	"github.com/c-4u/auth-service/domain/service"
+	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/gin-gonic/gin"
 )
 
 type AuthMiddleware struct {
-	Service     *service.Service
-	AccessToken string
+	Service *service.Service
+	I       *external.AuthInterceptor
+}
+
+func NewAuthMiddleware(service *service.Service, interceptor *external.AuthInterceptor) *AuthMiddleware {
+	return &AuthMiddleware{
+		Service: service,
+		I:       interceptor,
+	}
 }
 
 func (a *AuthMiddleware) Require() gin.HandlerFunc {
@@ -31,7 +39,7 @@ func (a *AuthMiddleware) Require() gin.HandlerFunc {
 			return
 		}
 
-		a.AccessToken = accessToken
+		a.I.SetToken(accessToken)
 
 		// TODO: adds retricted permissions
 		// for _, role := range claims.Roles {
@@ -41,11 +49,5 @@ func (a *AuthMiddleware) Require() gin.HandlerFunc {
 		// }
 
 		// return status.Error(codes.PermissionDenied, "no permission to access this RPC")
-	}
-}
-
-func NewAuthMiddleware(service *service.Service) *AuthMiddleware {
-	return &AuthMiddleware{
-		Service: service,
 	}
 }
