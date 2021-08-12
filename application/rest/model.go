@@ -33,3 +33,26 @@ type Claims struct {
 type HTTPError struct {
 	Error string `json:"error" example:"status bad request"`
 }
+
+type CreateUserRequest struct {
+	Username   string `json:"username" binding:"required"`
+	EmployeeID string `json:"employee_id"`
+}
+
+type CreateUserResponse struct {
+	ID string `json:"id"`
+}
+
+type IDRequest struct {
+	ID string `uri:"id" binding:"required,uuid"`
+}
+
+type SetPasswordRequest struct {
+	Password  string `json:"password" binding:"required"`
+	Temporary bool   `json:"temporary"`
+}
+
+type HTTPResponse struct {
+	Code    int    `json:"code,omitempty" example:"200"`
+	Message string `json:"message,omitempty" example:"a message"`
+}

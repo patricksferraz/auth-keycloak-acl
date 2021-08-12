@@ -13,4 +13,6 @@ type RepositoryInterface interface {
 
 	CreateUser(ctx context.Context, user *entity.User, accessToken string) error
 	SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error
+
+	PublishEvent(ctx context.Context, msg, topic, key string) error
 }

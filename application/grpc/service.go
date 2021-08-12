@@ -89,7 +89,7 @@ func (s *GrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClaimsBy
 }
 
 func (s *GrpcService) CreateUser(ctx context.Context, in *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	userID, err := s.Service.CreateUser(ctx, in.User.Username, in.User.FirstName, in.User.LastName, in.User.Email, in.User.Enabled, in.User.EmailVerified, in.User.EmployeeId, in.AccessToken)
+	userID, err := s.Service.CreateUser(ctx, in.User.Username, in.User.EmployeeId, in.AccessToken)
 	if err != nil {
 		return &pb.CreateUserResponse{}, err
 	}

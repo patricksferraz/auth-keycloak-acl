@@ -23,6 +23,7 @@ import (
 
 	"github.com/c-4u/auth-service/application/rest"
 	"github.com/c-4u/auth-service/infrastructure/external"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +44,18 @@ func NewRestCmd() *cobra.Command {
 				os.Getenv("KEYCLOAK_CLIENT_SECRET"),
 				os.Getenv("KEYCLOAK_AUDIENCE"),
 			)
-			rest.StartRestServer(service, restPort)
+
+			deliveryChan := make(chan ckafka.Event)
+			kafka, err := external.NewKafka(
+				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
+				deliveryChan,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			go kafka.DeliveryReport()
+			rest.StartRestServer(service, kafka, restPort)
 		},
 	}
 

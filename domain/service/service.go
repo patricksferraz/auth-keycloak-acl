@@ -5,6 +5,7 @@ import (
 
 	"github.com/c-4u/auth-service/domain/entity"
 	"github.com/c-4u/auth-service/domain/repository"
+	"github.com/c-4u/auth-service/infrastructure/external/topic"
 	"github.com/c-4u/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
@@ -76,13 +77,28 @@ func (a *Service) FindClaimsByToken(ctx context.Context, accessToken string) (*e
 	return claims, nil
 }
 
-func (s *Service) CreateUser(ctx context.Context, username, firstName, lastName, email string, enabled, emailVerified bool, employeeID, accessToken string) (*string, error) {
-	user, err := entity.NewUser("", username, firstName, lastName, email, enabled, emailVerified, employeeID)
+func (s *Service) CreateUser(ctx context.Context, username, employeeID, accessToken string) (*string, error) {
+	user, err := entity.NewUser(username, employeeID)
 	if err != nil {
 		return nil, err
 	}
 
 	err = s.Repository.CreateUser(ctx, user, accessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := entity.NewUserEvent(user)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := event.ToJson()
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.Repository.PublishEvent(ctx, string(msg), topic.NEW_USER, user.ID)
 	if err != nil {
 		return nil, err
 	}

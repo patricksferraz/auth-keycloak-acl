@@ -24,23 +24,40 @@ import (
 // @contact.email contato@coding4u.com.br
 
 // @BasePath /api/v1
-func StartRestServer(keycloak *external.Keycloak, port int) {
+func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"POST", "OPTIONS", "GET", "PUT"},
+		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Origin", "Cache-Control", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowAllOrigins:  true,
+		AllowCredentials: true,
+	}))
 	r.Use(apmgin.Middleware(r))
 
-	repository := repository.NewRepository(keycloak)
+	repository := repository.NewRepository(keycloak, kafka)
 	service := _service.NewService(repository)
+	authMiddlerare := NewAuthMiddleware(service)
 	restService := NewRestService(service)
 
-	v1 := r.Group("api/v1/auth")
+	v1 := r.Group("api/v1")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		v1.POST("/login", restService.Login)
-		v1.POST("/refresh-token", restService.RefreshToken)
-		v1.POST("/claims", restService.FindClaimsByToken)
+
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/login", restService.Login)
+			auth.POST("/refresh-token", restService.RefreshToken)
+			auth.POST("/claims", restService.FindClaimsByToken)
+		}
+
+		user := v1.Group("/user", authMiddlerare.Require())
+		{
+			user.POST("", restService.CreateUser)
+			user.POST("/:id/password", restService.SetPassword)
+		}
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

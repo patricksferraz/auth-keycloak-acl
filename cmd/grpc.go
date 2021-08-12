@@ -23,6 +23,7 @@ import (
 
 	"github.com/c-4u/auth-service/application/grpc"
 	"github.com/c-4u/auth-service/infrastructure/external"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +44,18 @@ func NewGrpcCmd() *cobra.Command {
 				os.Getenv("KEYCLOAK_CLIENT_SECRET"),
 				os.Getenv("KEYCLOAK_AUDIENCE"),
 			)
-			grpc.StartGrpcServer(service, grpcPort)
+
+			deliveryChan := make(chan ckafka.Event)
+			kafka, err := external.NewKafka(
+				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
+				deliveryChan,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			go kafka.DeliveryReport()
+			grpc.StartGrpcServer(service, kafka, grpcPort)
 		},
 	}
 

@@ -24,14 +24,9 @@ func NewPasswordInfo(userID, password string, temporary bool) *PasswordInfo {
 }
 
 type User struct {
-	ID            string `json:"id" valid:"uuid"`
-	Username      string `json:"username,omitempty" valid:"required"`
-	FirstName     string `json:"first_name,omitempty" valid:"required"`
-	LastName      string `json:"last_name,omitempty" valid:"required"`
-	Email         string `json:"email,omitempty" valid:"email"`
-	Enabled       bool   `json:"enabled,omitempty" valid:"-"`
-	EmailVerified bool   `json:"email_verified,omitempty" valid:"-"`
-	EmployeeID    string `json:"employee_id" attr:"employee_id" valid:"uuid"`
+	ID         string `json:"id" valid:"uuid"`
+	Username   string `json:"username,omitempty" valid:"required"`
+	EmployeeID string `json:"employee_id,omitempty" attr:"employee_id" valid:"-"`
 }
 
 func (e *User) isValid() error {
@@ -39,23 +34,13 @@ func (e *User) isValid() error {
 	return err
 }
 
-func NewUser(id, username, firstName, lastName, email string, enabled, emailVerified bool, employeeID string) (*User, error) {
+func NewUser(username, employeeID string) (*User, error) {
 
 	user := User{
-		Username:      username,
-		FirstName:     firstName,
-		LastName:      lastName,
-		Email:         email,
-		Enabled:       enabled,
-		EmailVerified: emailVerified,
-		EmployeeID:    employeeID,
+		Username:   username,
+		EmployeeID: employeeID,
 	}
-
-	if id == "" {
-		user.ID = uuid.NewV4().String()
-	} else {
-		user.ID = id
-	}
+	user.ID = uuid.NewV4().String()
 
 	if err := user.isValid(); err != nil {
 		return nil, err

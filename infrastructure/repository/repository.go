@@ -8,18 +8,21 @@ import (
 	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/c-4u/auth-service/logger"
 	"github.com/c-4u/auth-service/utils"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/mitchellh/mapstructure"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )
 
 type Repository struct {
-	K *external.Keycloak
+	K     *external.Keycloak
+	Kafka *external.Kafka
 }
 
-func NewRepository(keycloak *external.Keycloak) *Repository {
+func NewRepository(keycloak *external.Keycloak, kafka *external.Kafka) *Repository {
 	return &Repository{
-		K: keycloak,
+		K:     keycloak,
+		Kafka: kafka,
 	}
 }
 
@@ -108,12 +111,7 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {
 	gUser := gocloak.User{
-		Username:      &user.Username,
-		FirstName:     &user.FirstName,
-		LastName:      &user.LastName,
-		Email:         &user.Email,
-		Enabled:       &user.Enabled,
-		EmailVerified: &user.EmailVerified,
+		Username: &user.Username,
 	}
 	gUser.Attributes = utils.StructToAttr(gUser)
 
@@ -129,4 +127,17 @@ func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessTo
 func (r *Repository) SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error {
 	err := r.K.Client.SetPassword(ctx, accessToken, pass.UserID, r.K.Realm, pass.Password, pass.Temporary)
 	return err
+}
+
+func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) error {
+	message := &ckafka.Message{
+		TopicPartition: ckafka.TopicPartition{Topic: &topic, Partition: ckafka.PartitionAny},
+		Value:          []byte(msg),
+		Key:            []byte(key),
+	}
+	err := r.Kafka.Producer.Produce(message, r.Kafka.DeliveryChan)
+	if err != nil {
+		return err
+	}
+	return nil
 }

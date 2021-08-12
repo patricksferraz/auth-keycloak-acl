@@ -11,7 +11,14 @@ import (
 )
 
 type RestService struct {
-	Service *service.Service
+	Service    *service.Service
+	Middleware *AuthMiddleware
+}
+
+func NewRestService(service *service.Service) *RestService {
+	return &RestService{
+		Service: service,
+	}
 }
 
 // Login godoc
@@ -25,7 +32,7 @@ type RestService struct {
 // @Success 200 {object} JWT
 // @Failure 401 {object} HTTPError
 // @Router /auth/login [post]
-func (a *RestService) Login(ctx *gin.Context) {
+func (s *RestService) Login(ctx *gin.Context) {
 	var json Auth
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -37,7 +44,7 @@ func (a *RestService) Login(ctx *gin.Context) {
 		return
 	}
 
-	jwt, err := a.Service.Login(ctx, json.Username, json.Password)
+	jwt, err := s.Service.Login(ctx, json.Username, json.Password)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -59,7 +66,7 @@ func (a *RestService) Login(ctx *gin.Context) {
 // @Success 200 {object} JWT
 // @Failure 400 {object} HTTPError
 // @Router /auth/refresh-token [post]
-func (a *RestService) RefreshToken(ctx *gin.Context) {
+func (s *RestService) RefreshToken(ctx *gin.Context) {
 	var json RefreshToken
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -71,7 +78,7 @@ func (a *RestService) RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	jwt, err := a.Service.RefreshToken(ctx, json.RefreshToken)
+	jwt, err := s.Service.RefreshToken(ctx, json.RefreshToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -94,7 +101,7 @@ func (a *RestService) RefreshToken(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Router /auth/claims [post]
-func (a *RestService) FindClaimsByToken(ctx *gin.Context) {
+func (s *RestService) FindClaimsByToken(ctx *gin.Context) {
 	var json AccessToken
 
 	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
@@ -106,7 +113,7 @@ func (a *RestService) FindClaimsByToken(ctx *gin.Context) {
 		return
 	}
 
-	claims, err := a.Service.FindClaimsByToken(ctx, json.AccessToken)
+	claims, err := s.Service.FindClaimsByToken(ctx, json.AccessToken)
 	if err != nil {
 		log.WithError(err)
 		apm.CaptureError(ctx, err).Send()
@@ -117,8 +124,61 @@ func (a *RestService) FindClaimsByToken(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, claims)
 }
 
-func NewRestService(service *service.Service) *RestService {
-	return &RestService{
-		Service: service,
+// CreateUser godoc
+// @Summary create User
+// @ID createUser
+// @Tags User
+// @Description Create User
+// @Accept json
+// @Produce json
+// @Param body body CreateUserRequest true "JSON body for create user"
+// @Success 200 {object} CreateUserResponse
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /user [post]
+func (s *RestService) CreateUser(ctx *gin.Context) {
+	var json CreateUserRequest
+
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	id, err := s.Service.CreateUser(ctx, json.Username, json.EmployeeID, s.Middleware.AccessToken)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, CreateUserResponse{ID: *id})
+}
+
+// SetPassword godoc
+// @Summary create User
+// @ID setPassword
+// @Tags User
+// @Description Set user password
+// @Accept json
+// @Produce json
+// @Param body body SetPasswordRequest true "JSON body set user password"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /user/{id}/password [post]
+func (s *RestService) SetPassword(ctx *gin.Context) {
+	var req IDRequest
+	var json SetPasswordRequest
+
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.JSON(http.StatusBadRequest, HTTPError{Error: err.Error()})
+		return
+	}
+
+	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary, s.Middleware.AccessToken)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, HTTPError{Error: err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, HTTPResponse{Code: http.StatusOK, Message: "updated successfully"})
 }
