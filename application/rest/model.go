@@ -28,8 +28,10 @@ type JWT struct {
 }
 
 type Claims struct {
-	UserID string   `json:"user_id"`
-	Roles  []string `json:"roles,omitempty"`
+	UserID     string   `json:"user_id"`
+	Username   string   `json:"username"`
+	EmployeeID string   `json:"employee_id"`
+	Roles      []string `json:"roles,omitempty"`
 }
 
 type HTTPError struct {
@@ -52,7 +54,7 @@ type IDRequest struct {
 
 type SetPasswordRequest struct {
 	Password  string `json:"password" binding:"required"`
-	Temporary bool   `json:"temporary"`
+	Temporary bool   `json:"temporary" default:"false"`
 }
 
 type HTTPResponse struct {

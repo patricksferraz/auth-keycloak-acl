@@ -415,6 +415,9 @@ var doc = `{
         "rest.Claims": {
             "type": "object",
             "properties": {
+                "employee_id": {
+                    "type": "string"
+                },
                 "roles": {
                     "type": "array",
                     "items": {
@@ -423,12 +426,16 @@ var doc = `{
                 },
                 "user_id": {
                     "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "rest.CreateUserRequest": {
             "type": "object",
             "required": [
+                "employee_id",
                 "username"
             ],
             "properties": {
@@ -527,7 +534,8 @@ var doc = `{
                     "type": "string"
                 },
                 "temporary": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 }
             }
         },

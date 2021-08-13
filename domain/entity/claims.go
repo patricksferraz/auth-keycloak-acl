@@ -9,8 +9,10 @@ func init() {
 }
 
 type Claims struct {
-	UserID string   `json:"user_id" mapstructure:"sub" valid:"uuid"`
-	Roles  []string `json:"roles,omitempty" mapstructure:"roles" valid:"-"`
+	UserID     string   `json:"user_id" mapstructure:"sub" valid:"uuid"`
+	Username   string   `json:"username" mapstructure:"preferred_username" valid:"required"`
+	EmployeeID string   `json:"employee_id" mapstructure:"employee_id" valid:"-"`
+	Roles      []string `json:"roles,omitempty" mapstructure:"roles" valid:"-"`
 }
 
 func (e *Claims) isValid() error {

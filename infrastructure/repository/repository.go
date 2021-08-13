@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Nerzal/gocloak/v8"
@@ -95,9 +96,11 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 		return nil, err
 	}
 
-	Claims := new(entity.Claims)
-	mapstructure.Decode(jwt.Claims, Claims)
-	log.WithField("claims", Claims).Info("claims mapstructure")
+	fmt.Println(jwt.Claims)
+
+	claims := new(entity.Claims)
+	mapstructure.Decode(jwt.Claims, claims)
+	log.WithField("claims", claims).Info("claims mapstructure")
 
 	type ResourceAccess struct {
 		ResourceAccess map[string]map[string][]string `mapstructure:"resource_access"`
@@ -107,10 +110,10 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 	mapstructure.Decode(jwt.Claims, ra)
 
 	roles := ra.ResourceAccess[r.K.ClientID]["roles"]
-	Claims.Roles = roles
-	log.WithField("claims", Claims).Info("claims with roles")
+	claims.Roles = roles
+	log.WithField("claims", claims).Info("claims with roles")
 
-	return Claims, nil
+	return claims, nil
 }
 
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {

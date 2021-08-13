@@ -19,11 +19,15 @@ definitions:
     type: object
   rest.Claims:
     properties:
+      employee_id:
+        type: string
       roles:
         items:
           type: string
         type: array
       user_id:
+        type: string
+      username:
         type: string
     type: object
   rest.CreateUserRequest:
@@ -33,6 +37,7 @@ definitions:
       username:
         type: string
     required:
+    - employee_id
     - username
     type: object
   rest.CreateUserResponse:
@@ -91,6 +96,7 @@ definitions:
       password:
         type: string
       temporary:
+        default: false
         type: boolean
     required:
     - password

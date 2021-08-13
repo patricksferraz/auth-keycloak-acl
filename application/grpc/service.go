@@ -83,8 +83,10 @@ func (s *GrpcService) FindClaimsByToken(ctx context.Context, in *pb.FindClaimsBy
 	}
 
 	return &pb.Claims{
-		UserId: claims.UserID,
-		Roles:  claims.Roles,
+		UserId:     claims.UserID,
+		Username:   claims.Username,
+		EmployeeId: claims.EmployeeID,
+		Roles:      claims.Roles,
 	}, nil
 }
 
