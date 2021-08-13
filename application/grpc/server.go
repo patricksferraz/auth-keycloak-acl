@@ -14,13 +14,21 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func StartGrpcServer(keycloak *external.Keycloak, kafka *external.Kafka, port int) {
+func StartGrpcServer(keycloak *external.Keycloak, kafka *external.Kafka, employeeServiceAddr string, port int) {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(apmgrpc.NewUnaryServerInterceptor(apmgrpc.WithRecovery())),
 	)
 	reflection.Register(grpcServer)
 
-	repository := repository.NewRepository(keycloak, kafka)
+	authInterceptor := external.NewAuthInterceptor()
+	employeeConn, err := external.GrpcClient(employeeServiceAddr, authInterceptor.TransportOpts()...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer employeeConn.Close()
+
+	employeeClient := external.NewEmployeeClient(employeeConn)
+	repository := repository.NewRepository(keycloak, kafka, employeeClient)
 	service := _service.NewService(repository)
 	grpcService := NewGrpcService(service)
 	pb.RegisterAuthKeycloakAclServer(grpcServer, grpcService)

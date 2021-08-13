@@ -54,8 +54,10 @@ func NewGrpcCmd() *cobra.Command {
 				log.Fatal(err)
 			}
 
+			employeeServiceAddr := os.Getenv("EMPLOYEE_SERVICE_ADDR")
+
 			go kafka.DeliveryReport()
-			grpc.StartGrpcServer(service, kafka, grpcPort)
+			grpc.StartGrpcServer(service, kafka, employeeServiceAddr, grpcPort)
 		},
 	}
 

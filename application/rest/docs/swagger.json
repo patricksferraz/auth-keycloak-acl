@@ -141,7 +141,73 @@
                 }
             }
         },
-        "/user": {
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Search users by `filter`. if the page and page size are empty, 0 and 10 will be considered respectively.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "search users by filter",
+                "operationId": "searchUsers",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "name": "enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/rest.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -158,7 +224,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "create User",
+                "summary": "create user",
                 "operationId": "createUser",
                 "parameters": [
                     {
@@ -193,7 +259,57 @@
                 }
             }
         },
-        "/user/{id}/password": {
+        "/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Router for find user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "find user",
+                "operationId": "findUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/password": {
             "post": {
                 "security": [
                     {
@@ -210,7 +326,7 @@
                 "tags": [
                     "User"
                 ],
-                "summary": "create User",
+                "summary": "set user password",
                 "operationId": "setPassword",
                 "parameters": [
                     {
@@ -283,6 +399,9 @@
         "rest.Claims": {
             "type": "object",
             "properties": {
+                "employee_id": {
+                    "type": "string"
+                },
                 "roles": {
                     "type": "array",
                     "items": {
@@ -291,12 +410,16 @@
                 },
                 "user_id": {
                     "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "rest.CreateUserRequest": {
             "type": "object",
             "required": [
+                "employee_id",
                 "username"
             ],
             "properties": {
@@ -395,7 +518,28 @@
                     "type": "string"
                 },
                 "temporary": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "rest.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "employee_id": {
+                    "type": "string"
+                },
+                "enabled": {
                     "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

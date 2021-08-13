@@ -182,6 +182,8 @@ __Prerequisites__:
 
   ELASTIC_APM_SERVER_URL=http://apm-server:8200
 
+  EMPLOYEE_SERVICE_ADDR=employee-service:50051
+
   KAFKA_BOOTSTRAP_SERVERS=kafka:9094
   ```
 

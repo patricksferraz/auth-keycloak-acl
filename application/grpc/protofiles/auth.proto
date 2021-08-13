@@ -31,7 +31,9 @@ message JWT {
 
 message Claims {
     string user_id = 1;
-    repeated string roles = 2;
+    string username = 2;
+    string employee_id = 3;
+    repeated string roles = 4;
 }
 
 message CreateUserRequest {
@@ -46,7 +48,7 @@ message CreateUserResponse {
 message User {
     string id = 1;
     string username = 2;
-    string employee_id = 8;
+    string employee_id = 3;
 }
 
 message SetPasswordRequest {

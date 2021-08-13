@@ -56,9 +56,11 @@ func NewAllCmd() *cobra.Command {
 				log.Fatal(err)
 			}
 
+			employeeServiceAddr := os.Getenv("EMPLOYEE_SERVICE_ADDR")
+
 			go kafka.DeliveryReport()
-			go rest.StartRestServer(service, kafka, restPort)
-			grpc.StartGrpcServer(service, kafka, grpcPort)
+			go rest.StartRestServer(service, kafka, employeeServiceAddr, restPort)
+			grpc.StartGrpcServer(service, kafka, employeeServiceAddr, grpcPort)
 		},
 	}
 

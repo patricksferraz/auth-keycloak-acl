@@ -2,8 +2,11 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/Nerzal/gocloak/v8"
+	"github.com/c-4u/auth-service/application/grpc/pb"
 	"github.com/c-4u/auth-service/domain/entity"
 	"github.com/c-4u/auth-service/infrastructure/external"
 	"github.com/c-4u/auth-service/logger"
@@ -15,14 +18,16 @@ import (
 )
 
 type Repository struct {
-	K     *external.Keycloak
-	Kafka *external.Kafka
+	K              *external.Keycloak
+	Kafka          *external.Kafka
+	EmployeeClient *external.EmployeeClient
 }
 
-func NewRepository(keycloak *external.Keycloak, kafka *external.Kafka) *Repository {
+func NewRepository(keycloak *external.Keycloak, kafka *external.Kafka, employeeClient *external.EmployeeClient) *Repository {
 	return &Repository{
-		K:     keycloak,
-		Kafka: kafka,
+		K:              keycloak,
+		Kafka:          kafka,
+		EmployeeClient: employeeClient,
 	}
 }
 
@@ -91,9 +96,11 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 		return nil, err
 	}
 
-	Claims := new(entity.Claims)
-	mapstructure.Decode(jwt.Claims, Claims)
-	log.WithField("claims", Claims).Info("claims mapstructure")
+	fmt.Println(jwt.Claims)
+
+	claims := new(entity.Claims)
+	mapstructure.Decode(jwt.Claims, claims)
+	log.WithField("claims", claims).Info("claims mapstructure")
 
 	type ResourceAccess struct {
 		ResourceAccess map[string]map[string][]string `mapstructure:"resource_access"`
@@ -103,16 +110,16 @@ func (r *Repository) FindClaimsByToken(ctx context.Context, accessToken string) 
 	mapstructure.Decode(jwt.Claims, ra)
 
 	roles := ra.ResourceAccess[r.K.ClientID]["roles"]
-	Claims.Roles = roles
-	log.WithField("claims", Claims).Info("claims with roles")
+	claims.Roles = roles
+	log.WithField("claims", claims).Info("claims with roles")
 
-	return Claims, nil
+	return claims, nil
 }
 
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessToken string) error {
 	gUser := gocloak.User{
 		Username: &user.Username,
-		Enabled:  gocloak.BoolP(true),
+		Enabled:  &user.Enabled,
 	}
 	gUser.Attributes = utils.StructToAttr(user)
 
@@ -123,6 +130,64 @@ func (r *Repository) CreateUser(ctx context.Context, user *entity.User, accessTo
 
 	user.ID = userID
 	return nil
+}
+
+func (r *Repository) FindUser(ctx context.Context, id string, accessToken string) (*entity.User, error) {
+	e, err := r.K.Client.GetUserByID(ctx, accessToken, r.K.Realm, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var employeeID string
+	if e.Attributes != nil {
+		employeeID = (*e.Attributes)["employee_id"][0]
+	}
+
+	user := &entity.User{
+		Username:   *e.Username,
+		Enabled:    *e.Enabled,
+		EmployeeID: employeeID,
+	}
+	user.ID = *e.ID
+	user.CreatedAt = time.Unix(0, *e.CreatedTimestamp*int64(time.Millisecond))
+
+	return user, nil
+}
+
+func (r *Repository) SearchUsers(ctx context.Context, filter *entity.Filter, accessToken string) ([]*entity.User, error) {
+	first := *filter.Page * *filter.PageSize
+	gUsers, err := r.K.Client.GetUsers(
+		ctx,
+		accessToken,
+		r.K.Realm,
+		gocloak.GetUsersParams{
+			Username: filter.Username,
+			Enabled:  filter.Enabled,
+			First:    &first,
+			Max:      filter.PageSize,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*entity.User
+	for _, u := range gUsers {
+		var employeeID string
+		if u.Attributes != nil {
+			employeeID = (*u.Attributes)["employee_id"][0]
+		}
+		user := &entity.User{
+			Username:   *u.Username,
+			Enabled:    *u.Enabled,
+			EmployeeID: employeeID,
+		}
+		user.ID = *u.ID
+		user.CreatedAt = time.Unix(0, *u.CreatedTimestamp*int64(time.Millisecond))
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (r *Repository) SetPassword(ctx context.Context, pass *entity.PasswordInfo, accessToken string) error {
@@ -141,4 +206,12 @@ func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) e
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) FindEmployee(ctx context.Context, employeeID string) error {
+	req := &pb.FindEmployeeRequest{
+		Id: employeeID,
+	}
+	_, err := r.EmployeeClient.C.FindEmployee(ctx, req)
+	return err
 }

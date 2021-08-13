@@ -1,5 +1,7 @@
 package rest
 
+import "time"
+
 type Auth struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -26,8 +28,10 @@ type JWT struct {
 }
 
 type Claims struct {
-	UserID string   `json:"user_id"`
-	Roles  []string `json:"roles,omitempty"`
+	UserID     string   `json:"user_id"`
+	Username   string   `json:"username"`
+	EmployeeID string   `json:"employee_id"`
+	Roles      []string `json:"roles,omitempty"`
 }
 
 type HTTPError struct {
@@ -37,7 +41,7 @@ type HTTPError struct {
 
 type CreateUserRequest struct {
 	Username   string `json:"username" binding:"required"`
-	EmployeeID string `json:"employee_id"`
+	EmployeeID string `json:"employee_id" binding:"required"`
 }
 
 type CreateUserResponse struct {
@@ -50,10 +54,29 @@ type IDRequest struct {
 
 type SetPasswordRequest struct {
 	Password  string `json:"password" binding:"required"`
-	Temporary bool   `json:"temporary"`
+	Temporary bool   `json:"temporary" default:"false"`
 }
 
 type HTTPResponse struct {
 	Code    int    `json:"code,omitempty" example:"200"`
 	Message string `json:"message,omitempty" example:"a message"`
+}
+
+type Filter struct {
+	Username *string `json:"username" form:"username"`
+	Enabled  *bool   `json:"enabled" form:"enabled"`
+	PageSize *int    `json:"page_size" form:"page_size" default:"10"`
+	Page     *int    `json:"page" form:"page" default:"0"`
+}
+
+type SearchUsersRequest struct {
+	Filter `json:",inline"`
+}
+
+type User struct {
+	ID         string    `json:"id"`
+	Username   string    `json:"username,omitempty"`
+	Enabled    bool      `json:"enabled,omitempty"`
+	EmployeeID string    `json:"employee_id,omitempty"`
+	CreatedAt  time.Time `json:"created_at,omitempty"`
 }

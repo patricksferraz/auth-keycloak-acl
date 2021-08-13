@@ -83,6 +83,11 @@ func (s *Service) CreateUser(ctx context.Context, username, employeeID, accessTo
 		return nil, err
 	}
 
+	err = s.Repository.FindEmployee(ctx, employeeID)
+	if err != nil {
+		return nil, err
+	}
+
 	err = s.Repository.CreateUser(ctx, user, accessToken)
 	if err != nil {
 		return nil, err
@@ -104,6 +109,28 @@ func (s *Service) CreateUser(ctx context.Context, username, employeeID, accessTo
 	}
 
 	return &user.ID, nil
+}
+
+func (s *Service) FindUser(ctx context.Context, id, accessToken string) (*entity.User, error) {
+	user, err := s.Repository.FindUser(ctx, id, accessToken)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *Service) SearchUsers(ctx context.Context, username *string, enabled *bool, pageSize, page *int, accessToken string) ([]*entity.User, error) {
+	filter, err := entity.NewFilter(username, enabled, pageSize, page)
+	if err != nil {
+		return nil, err
+	}
+
+	users, err := s.Repository.SearchUsers(ctx, filter, accessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (s *Service) SetPassword(ctx context.Context, userID string, password string, temporary bool, accessToken string) error {
