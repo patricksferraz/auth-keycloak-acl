@@ -215,3 +215,8 @@ func (r *Repository) FindEmployee(ctx context.Context, employeeID string) error 
 	_, err := r.EmployeeClient.C.FindEmployee(ctx, req)
 	return err
 }
+
+func (r *Repository) Logout(ctx context.Context, refreshToken string) error {
+	err := r.K.Client.Logout(ctx, r.K.ClientID, r.K.ClientSecret, r.K.Realm, refreshToken)
+	return err
+}

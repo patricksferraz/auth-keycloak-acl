@@ -181,6 +181,33 @@ paths:
       summary: log in
       tags:
       - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout
+      operationId: logout
+      parameters:
+      - description: JSON body for Logout
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: logout
+      tags:
+      - Auth
   /auth/refresh-token:
     post:
       consumes:

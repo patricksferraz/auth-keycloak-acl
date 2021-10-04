@@ -8,6 +8,7 @@ import (
 
 type RepositoryInterface interface {
 	Login(ctx context.Context, auth *entity.Auth) (*entity.JWT, error)
+	Logout(ctx context.Context, refreshToken string) error
 	RefreshToken(ctx context.Context, refreshToken string) (*entity.JWT, error)
 	FindClaimsByToken(ctx context.Context, accessToken string) (*entity.Claims, error)
 
