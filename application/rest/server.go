@@ -62,6 +62,7 @@ func StartRestServer(keycloak *external.Keycloak, kafka *external.Kafka, employe
 		auth := v1.Group("/auth")
 		{
 			auth.POST("/login", restService.Login)
+			auth.POST("/logout", restService.Logout)
 			auth.POST("/refresh-token", restService.RefreshToken)
 			auth.POST("/claims", restService.FindClaimsByToken)
 		}

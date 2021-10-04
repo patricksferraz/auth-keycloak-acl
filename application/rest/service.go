@@ -281,3 +281,37 @@ func (s *RestService) SetPassword(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, HTTPResponse{Code: http.StatusOK, Message: "updated successfully"})
 }
+
+// Logout godoc
+// @Summary logout
+// @ID logout
+// @Tags Auth
+// @Description Logout
+// @Accept json
+// @Produce json
+// @Param body body RefreshToken true "JSON body for Logout"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPError
+// @Router /auth/logout [post]
+func (s *RestService) Logout(ctx *gin.Context) {
+	var json RefreshToken
+
+	log := logger.Log.WithFields(apmlogrus.TraceContext(ctx))
+
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		log.WithError(err)
+		apm.CaptureError(ctx, err).Send()
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := s.Service.Logout(ctx, json.RefreshToken)
+	if err != nil {
+		log.WithError(err)
+		apm.CaptureError(ctx, err).Send()
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, HTTPResponse{Code: http.StatusOK, Message: "logout successfully"})
+}

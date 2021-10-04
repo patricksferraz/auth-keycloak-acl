@@ -138,3 +138,8 @@ func (s *Service) SetPassword(ctx context.Context, userID string, password strin
 	err := s.Repository.SetPassword(ctx, pass, accessToken)
 	return err
 }
+
+func (a *Service) Logout(ctx context.Context, refreshToken string) error {
+	err := a.Repository.Logout(ctx, refreshToken)
+	return err
+}
