@@ -1,243 +1,127 @@
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
-***
-***
-***
-*** To avoid retyping too much info. Do a search and replace for the following:
-*** github_username, repo_name, twitter_handle, email, project_title, project_description
--->
+# Auth Service with Keycloak Integration
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
+[![Go Report Card](https://goreportcard.com/badge/github.com/patricksferraz/auth-service)](https://goreportcard.com/report/github.com/patricksferraz/auth-service)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GoDoc](https://godoc.org/github.com/patricksferraz/auth-service?status.svg)](https://godoc.org/github.com/patricksferraz/auth-service)
 
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="https://github.com/c-4u/auth-service">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+A robust authentication and authorization service built with Go, featuring Keycloak integration, gRPC support, and comprehensive API documentation.
 
-  <h3 align="center">TimeClock - Auth Service</h3>
+## 🌟 Features
 
-  <p align="center">
-    Microservice that provides an anti-corruption layer for authentication of microservices using keycloak
-    <br />
-    <a href="https://github.com/c-4u/auth-service"><strong>Explore the docs »</strong></a>
-    <!-- <br />
-    <br />
-    <a href="https://github.com/c-4u/auth-service">View Demo</a>
-    ·
-    <a href="https://github.com/c-4u/auth-service">Report Bug</a>
-    ·
-    <a href="https://github.com/c-4u/auth-service">Request Feature</a>-->
-  </p>
-</p>
+- 🔐 Keycloak Integration for Identity and Access Management
+- 🚀 gRPC Support for High-Performance Communication
+- 📚 Swagger/OpenAPI Documentation
+- 🔄 Kafka Integration for Event-Driven Architecture
+- 📊 Elastic APM Integration for Performance Monitoring
+- 🐳 Docker and Kubernetes Support
+- 🧪 Comprehensive Test Suite
+- 🔒 CORS Support
+- 📝 Structured Logging with Logrus
 
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <!-- <li><a href="#usage">Usage</a></li> -->
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#contact">Contact</a></li>
-    <!-- <li><a href="#acknowledgements">Acknowledgements</a></li> -->
-  </ol>
-</details>
+## 🏗️ Architecture
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+This service follows a clean architecture pattern with the following layers:
 
-Auth service is a microservice that provides an anti-corruption layer for keycloak, it provides an API that makes it possible to establish a communication using REST and gRPC.
+- **Domain**: Core business logic and entities
+- **Application**: Use cases and business rules
+- **Infrastructure**: External services integration
+- **API**: HTTP/gRPC endpoints and controllers
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-<!--
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo_name`, `twitter_handle`, `email`, `project_title`, `project_description` -->
-
-### Built With
-
-- [Go Lang](https://golang.org/)
-- List all: `go list -m all`
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-To get a local copy up and running follow these simple steps.
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Hiring a kubernetes cluster:
-  - [AWS](https://aws.amazon.com/pt/eks/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc&eks-blogs.sort-by=item.additionalFields.createdDate&eks-blogs.sort-order=desc)
-  - [Azure](https://azure.microsoft.com/pt-br/services/kubernetes-service/)
-  - [GCP](https://cloud.google.com/kubernetes-engine)
+- Go 1.16 or higher
+- Docker and Docker Compose
+- Keycloak instance
+- Kafka (optional, for event-driven features)
 
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+### Installation
 
-- Create a secret for docker registry
+1. Clone the repository:
+```bash
+git clone https://github.com/patricksferraz/auth-service.git
+cd auth-service
+```
 
-  ```sh
-  kubectl create secret docker-registry regcred \
-  --docker-server=$DOCKER_REGISTRY_SERVER \
-  --docker-username=$DOCKER_USER \
-  --docker-password=$DOCKER_PASSWORD \
-  --docker-email=$DOCKER_EMAIL
-  ```
+2. Copy the environment file and configure it:
+```bash
+cp .env.example .env
+```
 
-- Create a secret with env credentials
+3. Build and run with Docker Compose:
+```bash
+docker-compose up -d
+```
 
-  ```sh
-  # file: credentials
-  KEYCLOAK_REALM=keycloak_realm
-  KEYCLOAK_CLIENT_ID=keycloak_client_id
-  KEYCLOAK_CLIENT_SECRET=keycloak_client_secret
-  KEYCLOAK_AUDIENCE=account
-  ```
+### Development
 
-  `kubectl create secret generic auth-secret --from-env-file ./credentials`
+1. Install dependencies:
+```bash
+go mod download
+```
 
-### Deploy
+2. Run the service:
+```bash
+go run main.go
+```
 
-- `kubectl apply -f ./k8s`
+## 📚 API Documentation
 
-<!-- USAGE EXAMPLES -->
-<!-- ## Usage
+Once the service is running, you can access the Swagger documentation at:
+```
+http://localhost:8080/swagger/index.html
+```
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+## 🧪 Testing
 
-_For more examples, please refer to the [Documentation](https://example.com)_ -->
+Run the test suite:
+```bash
+make test
+```
 
-<!-- ROADMAP -->
-## Roadmap
+For integration tests:
+```bash
+docker-compose -f docker-compose.test.yml up
+```
 
-See the [open issues](https://github.com/c-4u/auth-service/issues) for a list of proposed features (and known issues).
+## 🛠️ Configuration
 
-<!-- CONTRIBUTING -->
-## Contributing
+The service can be configured through environment variables or configuration files. See `.env.example` for available options.
 
-Any contributions you make are **greatly appreciated**.
+## 📦 Deployment
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+### Docker
+
+Build the Docker image:
+```bash
+docker build -t auth-service .
+```
+
+### Kubernetes
+
+Kubernetes manifests are available in the `k8s/` directory.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-__Prerequisites__:
+## 📝 License
 
-- Golang
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-  ```sh
-  wget https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
-  rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.2.linux-amd64.tar.gz
-  export PATH=$PATH:/usr/local/go/bin
-  ```
+## 🙏 Acknowledgments
 
-- Docker and docker-compose
+- [Keycloak](https://www.keycloak.org/)
+- [Gin Web Framework](https://github.com/gin-gonic/gin)
+- [gRPC](https://grpc.io/)
+- [Kafka](https://kafka.apache.org/)
+- [Elastic APM](https://www.elastic.co/apm)
 
-  ```sh
-  sudo apt-get install docker docker-compose docker.io -y
-  ```
+## 📫 Contact
 
-- Environment
-
-  ```sh
-  # .env
-  AUTH_GRPC_PORT=50051
-  AUTH_REST_PORT=8088
-
-  KEYCLOAK_BASE_PATH=http://keycloak:8080
-  KEYCLOAK_REALM=realm
-  KEYCLOAK_CLIENT_ID=client
-  KEYCLOAK_CLIENT_SECRET=4efc7d46-12fb-4d97-9d18-d95f8c38b7b7
-  KEYCLOAK_AUDIENCE=account
-
-  KEYCLOAK_DB=keycloak
-  KEYCLOAK_USERNAME=username
-  KEYCLOAK_PASSWORD=password
-
-  ELASTIC_APM_SERVER_URL=http://apm-server:8200
-
-  EMPLOYEE_SERVICE_ADDR=employee-service:50051
-
-  KAFKA_BOOTSTRAP_SERVERS=kafka:9094
-  ```
-
-__Installation__:
-
-1. Clone the repo
-
-   ```sh
-   git clone https://github.com/c-4u/auth-service.git
-   ```
-
-2. Run
-
-   ```sh
-   make up
-   ```
-
-3. Test
-
-   ```sh
-   make gtest
-   ```
-
-__Installation in local kubernetes__:
-
-1. Install [k3d](https://k3d.io/), [Kind](https://kind.sigs.k8s.io/) or similar
-2. Install [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [Helm](https://helm.sh/)
-3. Follow the steps of [Getting Started](#getting-started)
-    - Connect to cluster
-    - For the local keycloak, run:
-
-      `helm install keycloak codecentric/keycloak`
-
-    - [optional] For the local apm-server, run:
-      `helm install apm-server elastic/apm-server`
-
-    - finally, run:
-
-      `kubectl apply -f k8s/`
-<!-- LICENSE -->
-<!-- ## License -->
-
-<!-- Distributed under the MIT License. See `LICENSE` for more information. -->
-
-<!-- CONTACT -->
-## Contact
-
-Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
-
-Project Link: [auth-service](https://github.com/c-4u/auth-service)
-
-<!-- ACKNOWLEDGEMENTS -->
-<!-- ## Acknowledgements
-
-* []()
-* []()
-* []() -->
+Project Link: [https://github.com/patricksferraz/auth-service](https://github.com/patricksferraz/auth-service)

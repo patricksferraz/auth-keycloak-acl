@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/c-4u/auth-service/utils"
+	"github.com/patricksferraz/auth-service/utils"
 	"github.com/stretchr/testify/require"
 	"syreclabs.com/go/faker"
 )

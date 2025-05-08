@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/Nerzal/gocloak/v8"
-	"github.com/c-4u/auth-service/application/grpc/pb"
-	"github.com/c-4u/auth-service/domain/entity"
-	"github.com/c-4u/auth-service/infrastructure/external"
-	"github.com/c-4u/auth-service/logger"
-	"github.com/c-4u/auth-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/mitchellh/mapstructure"
+	"github.com/patricksferraz/auth-service/application/grpc/pb"
+	"github.com/patricksferraz/auth-service/domain/entity"
+	"github.com/patricksferraz/auth-service/infrastructure/external"
+	"github.com/patricksferraz/auth-service/logger"
+	"github.com/patricksferraz/auth-service/utils"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )

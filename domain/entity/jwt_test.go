@@ -3,7 +3,7 @@ package entity_test
 import (
 	"testing"
 
-	"github.com/c-4u/auth-service/domain/entity"
+	"github.com/patricksferraz/auth-service/domain/entity"
 	"github.com/stretchr/testify/require"
 	"syreclabs.com/go/faker"
 )

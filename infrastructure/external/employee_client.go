@@ -1,7 +1,7 @@
 package external
 
 import (
-	"github.com/c-4u/auth-service/application/grpc/pb"
+	"github.com/patricksferraz/auth-service/application/grpc/pb"
 	"google.golang.org/grpc"
 )
 

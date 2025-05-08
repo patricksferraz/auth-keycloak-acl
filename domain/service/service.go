@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/c-4u/auth-service/domain/entity"
-	"github.com/c-4u/auth-service/domain/repository"
-	"github.com/c-4u/auth-service/infrastructure/external/topic"
-	"github.com/c-4u/auth-service/logger"
+	"github.com/patricksferraz/auth-service/domain/entity"
+	"github.com/patricksferraz/auth-service/domain/repository"
+	"github.com/patricksferraz/auth-service/infrastructure/external/topic"
+	"github.com/patricksferraz/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )

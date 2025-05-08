@@ -3,9 +3,9 @@ package rest
 import (
 	http "net/http"
 
-	"github.com/c-4u/auth-service/domain/service"
-	"github.com/c-4u/auth-service/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/patricksferraz/auth-service/domain/service"
+	"github.com/patricksferraz/auth-service/logger"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmlogrus"
 )

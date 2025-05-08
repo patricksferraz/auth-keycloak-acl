@@ -1,4 +1,4 @@
-module github.com/c-4u/auth-service
+module github.com/patricksferraz/auth-service
 
 go 1.16
 
